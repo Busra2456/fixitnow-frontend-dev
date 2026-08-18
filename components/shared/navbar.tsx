@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 // Public navigation items
 const navItems = [
@@ -101,12 +102,22 @@ export function Navbar({ user }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
-          {/* Logo */}
-          <Link href="/" className="shrink-0">
-            <span className="text-2xl font-bold text-primary">
-              FixItNow
-            </span>
-          </Link>
+       <Link
+  href="/"
+  className="shrink-0 flex items-center gap-1"
+>
+  <Image
+    src="/Wrench.svg"
+    alt="FixItNow"
+    width={22}
+    height={22}
+    priority
+  />
+
+  <span className="text-2xl font-bold text-primary">
+    FixItNow
+  </span>
+</Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
