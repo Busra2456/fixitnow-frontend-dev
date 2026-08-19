@@ -42,19 +42,19 @@ export async function proxy(request: NextRequest) {
   if (accessToken && AUTH_ROUTES.includes(pathname)) {
     if (userRole === "CUSTOMER") {
       return NextResponse.redirect(
-        new URL("/dashboard/customer", request.url)
+        new URL("/customer-dashboard", request.url)
       );
     }
 
     if (userRole === "TECHNICIAN") {
       return NextResponse.redirect(
-        new URL("/dashboard/technician", request.url)
+        new URL("/technician-dashboard/technician", request.url)
       );
     }
 
     if (userRole === "ADMIN") {
       return NextResponse.redirect(
-        new URL("/dashboard/admin", request.url)
+        new URL("/admin-dashboard/admin", request.url)
       );
     }
   }
@@ -81,7 +81,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Customer route protection
-  if (pathname.startsWith("/dashboard/customer")) {
+  if (pathname.startsWith("/customer-dashboard")) {
     if (userRole !== "CUSTOMER") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)
@@ -90,7 +90,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Technician route protection
-  if (pathname.startsWith("/dashboard/technician")) {
+  if (pathname.startsWith("/technician-dashboard/technician")) {
     if (userRole !== "TECHNICIAN") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)
@@ -99,7 +99,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Admin route protection
-  if (pathname.startsWith("/dashboard/admin")) {
+  if (pathname.startsWith("/admin-dashboard/admin")) {
     if (userRole !== "ADMIN") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)
@@ -107,6 +107,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  
   return NextResponse.next();
 }
 

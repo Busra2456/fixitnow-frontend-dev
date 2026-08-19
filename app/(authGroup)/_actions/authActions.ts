@@ -119,11 +119,11 @@ export const loginAction = async (
     ) as JwtPayload;
 
     if (decodedToken.role === "CUSTOMER") {
-      redirect("/dashboard/customer");
+      redirect("/customer-dashboard");
     } else if (decodedToken.role === "TECHNICIAN") {
-      redirect("/dashboard/technician");
+      redirect("/technician-dashboard/technician");
     } else if (decodedToken.role === "ADMIN") {
-      redirect("/dashboard/admin");
+      redirect("/admin-dashboard/admin");
     }
   }
 

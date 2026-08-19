@@ -59,11 +59,11 @@ export function Navbar({ user }: NavbarProps) {
     // Dashboard based on role
     if (action === "dashboard") {
       if (role === "CUSTOMER") {
-        router.push("/dashboard/customer");
+        router.push("/customer-dashboard");
       } else if (role === "TECHNICIAN") {
-        router.push("/dashboard/technician");
+        router.push("/technician-dashboard/technician");
       } else if (role === "ADMIN") {
-        router.push("/dashboard/admin");
+        router.push("/admin-dashboard/admin");
       }
 
       return;
