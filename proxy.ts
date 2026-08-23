@@ -48,7 +48,7 @@ export async function proxy(request: NextRequest) {
 
     if (userRole === "TECHNICIAN") {
       return NextResponse.redirect(
-        new URL("/technician-dashboard/technician", request.url)
+        new URL("/technician-dashboard", request.url)
       );
     }
 
@@ -90,7 +90,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Technician route protection
-  if (pathname.startsWith("/technician-dashboard/technician")) {
+  if (pathname.startsWith("/technician-dashboard")) {
     if (userRole !== "TECHNICIAN") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)

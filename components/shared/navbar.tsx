@@ -61,7 +61,7 @@ export function Navbar({ user }: NavbarProps) {
       if (role === "CUSTOMER") {
         router.push("/customer-dashboard");
       } else if (role === "TECHNICIAN") {
-        router.push("/technician-dashboard/technician");
+        router.push("/technician-dashboard");
       } else if (role === "ADMIN") {
         router.push("/admin-dashboard/admin");
       }

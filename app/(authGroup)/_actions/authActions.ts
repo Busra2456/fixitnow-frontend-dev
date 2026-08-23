@@ -121,9 +121,9 @@ export const loginAction = async (
     if (decodedToken.role === "CUSTOMER") {
       redirect("/customer-dashboard");
     } else if (decodedToken.role === "TECHNICIAN") {
-      redirect("/technician-dashboard/technician");
+      redirect("/technician-dashboard");
     } else if (decodedToken.role === "ADMIN") {
-      redirect("/admin-dashboard/admin");
+      redirect("/admin-dashboard");
     }
   }
 

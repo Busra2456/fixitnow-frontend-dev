@@ -1,7 +1,5 @@
-"use client";
 
-import { useEffect, useState } from "react";
-import BookingStatusBadge from "./BookingStatusBadge";
+import PayNowButton from "./PayNowButton";
 import { getCustomerBookings } from "../_actions/customerBookingActions";
 
 type BookingStatus =
@@ -13,246 +11,223 @@ type BookingStatus =
   | "COMPLETED"
   | "CANCELLED";
 
-type Booking = {
+type CustomerBooking = {
   id: string;
   bookingDate: string;
   totalPrice: number;
   status: BookingStatus;
-  technician: {
+
+  technician?: {
+    id: string;
     name: string;
+    email?: string;
   };
-  service: {
+
+  service?: {
+    id: string;
     title: string;
     price: number;
   };
 };
 
-type BookingResponse = {
-  success: boolean;
-  message?: string;
-  data?: Booking[];
-};
+export default async function BookingTable() {
+  const result = await getCustomerBookings();
 
-const BookingTable = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const loadBookings = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const result =
-          (await getCustomerBookings()) as BookingResponse;
-
-        if (!result.success) {
-          setError(
-            result.message || "Failed to load bookings."
-          );
-          return;
-        }
-
-        setBookings(result.data ?? []);
-      } catch (error) {
-        console.error("Failed to load bookings:", error);
-
-        setError(
-          "Something went wrong while loading bookings."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBookings();
-  }, []);
-
-  const formatDate = (date: string) => {
-    return new Intl.DateTimeFormat("en-BD", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(date));
-  };
-
-  const formatTime = (date: string) => {
-    return new Intl.DateTimeFormat("en-BD", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(date));
-  };
+  const bookings: CustomerBooking[] = result.success
+    ? (result.data as CustomerBooking[])
+    : [];
 
   return (
-    <section>
-      {/* Header */}
+    <div className="rounded-xl border bg-background p-6 shadow-sm">
       <div className="mb-4">
         <h2 className="text-xl font-semibold">
           Booking History
         </h2>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           Track and manage your service bookings.
         </p>
       </div>
 
-      {/* Loading */}
-      {loading && (
-        <div className="rounded-xl border bg-background p-8 text-center shadow-sm">
-          <p className="text-sm text-muted-foreground">
-            Loading bookings...
-          </p>
-        </div>
+      {!result.success && (
+        <p className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-500">
+          {result.message}
+        </p>
       )}
 
-      {/* Error */}
-      {!loading && error && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
-          <p className="text-sm text-destructive">
-            {error}
+      {bookings.length === 0 ? (
+        <div className="rounded-lg border bg-muted/20 p-8 text-center">
+          <p className="text-sm font-medium">
+            No bookings found.
+          </p>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            You do not have any service bookings yet.
           </p>
         </div>
-      )}
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] text-sm">
+            <thead>
+              <tr className="border-b text-left">
+                <th className="p-3 font-semibold">
+                  Service
+                </th>
 
-      {/* Empty */}
-      {!loading && !error && bookings.length === 0 && (
-        <div className="rounded-xl border bg-background p-8 text-center shadow-sm">
-          <h3 className="font-semibold">
-            No bookings found
-          </h3>
+                <th className="p-3 font-semibold">
+                  Technician
+                </th>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            You haven&apos;t made any service bookings yet.
-          </p>
-        </div>
-      )}
+                <th className="p-3 font-semibold">
+                  Date
+                </th>
 
-      {/* Booking Table */}
-      {!loading && !error && bookings.length > 0 && (
-        <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-sm">
-              <thead className="border-b bg-muted/40">
-                <tr>
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Service
-                  </th>
+                <th className="p-3 font-semibold">
+                  Time
+                </th>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Technician
-                  </th>
+                <th className="p-3 font-semibold">
+                  Price
+                </th>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Date
-                  </th>
+                <th className="p-3 font-semibold">
+                  Status
+                </th>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Time
-                  </th>
+                <th className="p-3 font-semibold">
+                  Action
+                </th>
+              </tr>
+            </thead>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Price
-                  </th>
+            <tbody>
+              {bookings.map((booking) => (
+                <tr
+                  key={booking.id}
+                  className="border-b last:border-b-0 hover:bg-muted/30"
+                >
+                  {/* Service */}
+                  <td className="p-3">
+                    <span className="font-medium">
+                      {booking.service?.title ?? "N/A"}
+                    </span>
+                  </td>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Status
-                  </th>
+                  {/* Technician */}
+                  <td className="p-3">
+                    {booking.technician?.name ?? "N/A"}
+                  </td>
 
-                  <th className="px-5 py-4 text-left font-semibold">
-                    Action
-                  </th>
-                </tr>
-              </thead>
+                  {/* Date */}
+                  <td className="p-3 whitespace-nowrap">
+                    {new Date(
+                      booking.bookingDate
+                    ).toLocaleDateString()}
+                  </td>
 
-              <tbody>
-                {bookings.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="border-b last:border-0"
-                  >
-                    {/* Service */}
-                    <td className="px-5 py-4 font-medium">
-                      {booking.service?.title || "Service"}
-                    </td>
+                  {/* Time */}
+                  <td className="p-3 whitespace-nowrap">
+                    {new Date(
+                      booking.bookingDate
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </td>
 
-                    {/* Technician */}
-                    <td className="px-5 py-4">
-                      {booking.technician?.name ||
-                        "Technician"}
-                    </td>
+                  {/* Price */}
+                  <td className="p-3 whitespace-nowrap font-medium">
+                    ৳
+                    {Number(
+                      booking.totalPrice
+                    ).toLocaleString("en-BD")}
+                  </td>
 
-                    {/* Date */}
-                    <td className="px-5 py-4">
-                      {formatDate(booking.bookingDate)}
-                    </td>
-
-                    {/* Time */}
-                    <td className="px-5 py-4">
-                      {formatTime(booking.bookingDate)}
-                    </td>
-
-                    {/* Price */}
-                    <td className="px-5 py-4 font-medium">
-                      ৳
-                      {booking.totalPrice.toLocaleString(
-                        "en-BD"
+                  {/* Status */}
+                  <td className="p-3">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                        booking.status === "REQUESTED"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : booking.status === "ACCEPTED"
+                            ? "bg-blue-100 text-blue-700"
+                            : booking.status === "PAID"
+                              ? "bg-purple-100 text-purple-700"
+                              : booking.status === "IN_PROGRESS"
+                                ? "bg-green-100 text-green-700"
+                                : booking.status === "COMPLETED"
+                                  ? "bg-gray-100 text-gray-700"
+                                  : booking.status === "DECLINED"
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-red-200 text-red-800"
+                      }`}
+                    >
+                      {booking.status.replace(
+                        "_",
+                        " "
                       )}
-                    </td>
+                    </span>
+                  </td>
 
-                    {/* Status */}
-                    <td className="px-5 py-4">
-                      <BookingStatusBadge
-                        status={booking.status}
-                      />
-                    </td>
+                  {/* Action */}
+                  <td className="p-3">
+                    <div className="flex min-w-[110px] items-center">
+                      {/* Accepted → Pay Now */}
+                      {booking.status === "ACCEPTED" && (
+                        <PayNowButton
+                          bookingId={booking.id}
+                        />
+                      )}
 
-                    {/* Actions */}
-                    <td className="px-5 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {/* Pay Now */}
-                        {booking.status === "ACCEPTED" && (
-                          <button
-                            type="button"
-                            className="rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90"
-                          >
-                            Pay Now
-                          </button>
-                        )}
+                      {/* Requested → Waiting */}
+                      {booking.status === "REQUESTED" && (
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Waiting...
+                        </span>
+                      )}
 
-                        {/* Leave Review */}
-                        {booking.status === "COMPLETED" && (
-                          <button
-                            type="button"
-                            className="rounded-md border px-3 py-2 text-xs font-medium transition hover:bg-muted"
-                          >
-                            Leave Review
-                          </button>
-                        )}
+                      {/* Paid → Paid */}
+                      {booking.status === "PAID" && (
+                        <span className="text-xs font-medium text-green-600">
+                          ✓ Paid
+                        </span>
+                      )}
 
-                        {/* No Action */}
-                        {[
-                          "REQUESTED",
-                          "DECLINED",
-                          "PAID",
-                          "IN_PROGRESS",
-                          "CANCELLED",
-                        ].includes(booking.status) && (
-                          <span className="text-xs text-muted-foreground">
-                            No action
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      {/* In Progress */}
+                      {booking.status === "IN_PROGRESS" && (
+                        <span className="text-xs font-medium text-blue-600">
+                          In Progress
+                        </span>
+                      )}
+
+                      {/* Completed */}
+                      {booking.status === "COMPLETED" && (
+                        <span className="text-xs font-medium text-green-600">
+                          Completed
+                        </span>
+                      )}
+
+                      {/* Declined */}
+                      {booking.status === "DECLINED" && (
+                        <span className="text-xs font-medium text-red-500">
+                          Declined
+                        </span>
+                      )}
+
+                      {/* Cancelled */}
+                      {booking.status === "CANCELLED" && (
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Cancelled
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
-    </section>
+    </div>
   );
-};
-
-export default BookingTable;
+}
