@@ -2,151 +2,90 @@
 
 import { cookies } from "next/headers";
 
-export type BookingState = {
-  success: boolean;
+const API_URL = process.env.BACKEND_API_URL;
+
+type CreateBookingPayload = {
+  serviceId: string;
+  bookingDate: string;
+};
+
+type CreateBookingResponse = {
+  success?: boolean;
   statusCode?: number;
-  message: string;
+  message?: string;
   data?: unknown;
 };
 
 export async function createBooking(
-  prevState: BookingState,
-  formData: FormData
-): Promise<BookingState> {
-  try {
-    const cookieStore = await cookies();
+  payload: CreateBookingPayload
+) {
+  const cookieStore = await cookies();
 
-    const accessToken =
-      cookieStore.get("accessToken")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) {
-      return {
-        success: false,
-        statusCode: 401,
-        message:
-          "You are not logged in. Please log in to access this resource.",
-      };
-    }
-
-    const serviceId = formData.get("serviceId");
-    const bookingDate = formData.get("bookingDate");
-    const address = formData.get("address");
-    const notes = formData.get("notes");
-
-    console.log("Booking form data:", {
-      serviceId,
-      bookingDate,
-      address,
-      notes,
-    });
-
-    if (
-      typeof serviceId !== "string" ||
-      typeof bookingDate !== "string" ||
-      typeof address !== "string" ||
-      !serviceId ||
-      !bookingDate ||
-      !address
-    ) {
-      return {
-        success: false,
-        statusCode: 400,
-        message:
-          "Service ID, booking date and address are required.",
-      };
-    }
-
-    const date = new Date(bookingDate);
-
-    if (Number.isNaN(date.getTime())) {
-      return {
-        success: false,
-        statusCode: 400,
-        message: "Invalid booking date.",
-      };
-    }
-
-    const backendUrl = process.env.BACKEND_API_URL;
-
-    if (!backendUrl) {
-      return {
-        success: false,
-        statusCode: 500,
-        message:
-          "BACKEND_API_URL is not configured.",
-      };
-    }
-
-    const payload = {
-      serviceId,
-      bookingDate: date.toISOString(),
-      address,
-      notes:
-        typeof notes === "string"
-          ? notes
-          : "",
+  if (!API_URL) {
+    return {
+      success: false,
+      message: "BACKEND_API_URL is not configured.",
     };
+  }
 
-    console.log(
-      "Sending booking payload:",
-      payload
-    );
+  if (!accessToken) {
+    return {
+      success: false,
+      message: "Please login before booking a service.",
+    };
+  }
 
-    const response = await fetch(
-      `${backendUrl}/api/bookings`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-      }
-    );
+  try {
+    const response = await fetch(`${API_URL}/api/bookings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        serviceId: payload.serviceId,
+        bookingDate: payload.bookingDate,
+      }),
+      cache: "no-store",
+    });
 
     const text = await response.text();
 
-    let result: BookingState;
+    let result: CreateBookingResponse;
 
     try {
-      result = JSON.parse(text) as BookingState;
+      result = JSON.parse(text);
     } catch {
-      console.error(
-        "Backend returned non-JSON:",
-        text
-      );
+      console.error("Booking API returned:", text);
 
       return {
         success: false,
-        statusCode: response.status,
-        message:
-          "Backend returned invalid JSON.",
+        message: "Backend returned an invalid response.",
       };
     }
 
-    console.log(
-      "Backend booking response:",
-      result
-    );
+    if (!response.ok || !result.success) {
+      return {
+        success: false,
+        message:
+          result.message || "Failed to create booking.",
+      };
+    }
 
     return {
-      success: Boolean(result.success),
-      statusCode: response.status,
-      message: result.message || "",
+      success: true,
+      message:
+        result.message || "Booking created successfully.",
       data: result.data,
     };
   } catch (error) {
-    console.error(
-      "Create booking error:",
-      error
-    );
+    console.error("Create booking error:", error);
 
     return {
       success: false,
-      statusCode: 500,
-      message:
-        "Something went wrong while creating booking.",
+      message: "Could not connect to backend server.",
     };
   }
 }

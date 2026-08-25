@@ -60,6 +60,8 @@ const getAccessToken = async () => {
   return cookieStore.get("accessToken")?.value;
 };
 
+
+
 export const getTechnicianBookings = async () => {
   const accessToken = await getAccessToken();
 
@@ -86,6 +88,7 @@ export const getTechnicianBookings = async () => {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
         cache: "no-store",
       }
@@ -98,6 +101,11 @@ export const getTechnicianBookings = async () => {
     try {
       result = JSON.parse(text) as BookingListResponse;
     } catch {
+      console.error(
+        "Technician bookings API returned:",
+        text
+      );
+
       return {
         success: false,
         message: "Backend returned invalid response.",
@@ -126,6 +134,7 @@ export const getTechnicianBookings = async () => {
   }
 };
 
+
 export const updateTechnicianBookingStatus = async (
   bookingId: string,
   status: BookingStatus
@@ -143,6 +152,13 @@ export const updateTechnicianBookingStatus = async (
     return {
       success: false,
       message: "BACKEND_API_URL is not configured",
+    };
+  }
+
+  if (!bookingId) {
+    return {
+      success: false,
+      message: "Booking ID is required.",
     };
   }
 
@@ -169,6 +185,11 @@ export const updateTechnicianBookingStatus = async (
     try {
       result = JSON.parse(text) as BookingResponse;
     } catch {
+      console.error(
+        "Update booking API returned:",
+        text
+      );
+
       return {
         success: false,
         message: "Backend returned invalid response.",

@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "/technicians",
   "/about",
   "/contact",
+  "/payment/cancel",
 ];
 
 export async function proxy(request: NextRequest) {
@@ -54,7 +55,7 @@ export async function proxy(request: NextRequest) {
 
     if (userRole === "ADMIN") {
       return NextResponse.redirect(
-        new URL("/admin-dashboard/admin", request.url)
+        new URL("/admin-dashbard/admin", request.url)
       );
     }
   }
@@ -99,7 +100,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Admin route protection
-  if (pathname.startsWith("/admin-dashboard/admin")) {
+  if (pathname.startsWith("/admin-dashbard/admin")) {
     if (userRole !== "ADMIN") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)

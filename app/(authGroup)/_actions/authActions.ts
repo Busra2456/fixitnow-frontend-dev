@@ -123,7 +123,7 @@ export const loginAction = async (
     } else if (decodedToken.role === "TECHNICIAN") {
       redirect("/technician-dashboard");
     } else if (decodedToken.role === "ADMIN") {
-      redirect("/admin-dashboard");
+      redirect("/admin-dashbard");
     }
   }
 

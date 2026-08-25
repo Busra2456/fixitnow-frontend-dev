@@ -54,21 +54,22 @@ export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
 
   const handleUserMenuAction = async (action: string) => {
-    const role = user.data?.profile?.role;
+const role = user.data?.profile?.role;
+if (action === "dashboard") {
+  if (role === "CUSTOMER") {
+    router.push("/customer-dashboard");
+  } else if (role === "TECHNICIAN") {
+    router.push("/technician-dashboard");
+  } else if (role === "ADMIN") {
+    router.push("/admin-dashbard");
+  } else {
+    // console.log("User data:", user);
+    // console.log("Detected role:", role);
+    // toast.error("Invalid user role");
+  }
 
-    // Dashboard based on role
-    if (action === "dashboard") {
-      if (role === "CUSTOMER") {
-        router.push("/customer-dashboard");
-      } else if (role === "TECHNICIAN") {
-        router.push("/technician-dashboard");
-      } else if (role === "ADMIN") {
-        router.push("/admin-dashboard/admin");
-      }
-
-      return;
-    }
-
+  return;
+}
     // Profile
     if (action === "profile") {
       router.push("/profile");

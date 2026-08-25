@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   updateTechnicianBookingStatus,
   type BookingStatus,
@@ -127,7 +128,6 @@ export default function TechnicianBookingTable({
       {/* Desktop Table */}
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
-
           <thead className="border-b bg-muted/50">
             <tr>
               <th className="px-5 py-4 text-left text-sm font-semibold">
@@ -157,7 +157,6 @@ export default function TechnicianBookingTable({
           </thead>
 
           <tbody className="divide-y">
-
             {bookings.map((booking) => {
               const isUpdating =
                 updatingId === booking.id;
@@ -167,6 +166,7 @@ export default function TechnicianBookingTable({
                   key={booking.id}
                   className="hover:bg-muted/30"
                 >
+                  {/* Customer */}
                   <td className="px-5 py-4">
                     <div>
                       <p className="font-medium">
@@ -181,6 +181,7 @@ export default function TechnicianBookingTable({
                     </div>
                   </td>
 
+                  {/* Service */}
                   <td className="px-5 py-4">
                     <p className="font-medium">
                       {booking.service?.title ||
@@ -189,14 +190,12 @@ export default function TechnicianBookingTable({
 
                     {booking.service?.category && (
                       <p className="text-xs text-muted-foreground">
-                        {
-                          booking.service.category
-                            .name
-                        }
+                        {booking.service.category.name}
                       </p>
                     )}
                   </td>
 
+                  {/* Booking Date */}
                   <td className="px-5 py-4 text-sm">
                     {new Date(
                       booking.bookingDate
@@ -206,6 +205,7 @@ export default function TechnicianBookingTable({
                     })}
                   </td>
 
+                  {/* Price */}
                   <td className="px-5 py-4 font-medium">
                     ৳
                     {Number(
@@ -213,6 +213,7 @@ export default function TechnicianBookingTable({
                     ).toLocaleString("en-BD")}
                   </td>
 
+                  {/* Status */}
                   <td className="px-5 py-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(
@@ -225,6 +226,7 @@ export default function TechnicianBookingTable({
                     </span>
                   </td>
 
+                  {/* Action */}
                   <td className="px-5 py-4">
                     <BookingActions
                       booking={booking}
@@ -235,14 +237,12 @@ export default function TechnicianBookingTable({
                 </tr>
               );
             })}
-
           </tbody>
         </table>
       </div>
 
       {/* Mobile Cards */}
       <div className="space-y-4 p-4 md:hidden">
-
         {bookings.map((booking) => {
           const isUpdating =
             updatingId === booking.id;
@@ -253,7 +253,6 @@ export default function TechnicianBookingTable({
               className="rounded-lg border p-4"
             >
               <div className="flex items-start justify-between gap-3">
-
                 <div>
                   <h2 className="font-semibold">
                     {booking.service?.title ||
@@ -275,11 +274,9 @@ export default function TechnicianBookingTable({
                     booking.status
                   )}
                 </span>
-
               </div>
 
               <div className="mt-4 space-y-2 text-sm">
-
                 <p>
                   <span className="font-medium">
                     Date:
@@ -309,7 +306,6 @@ export default function TechnicianBookingTable({
                   {booking.customer?.email ||
                     "No email"}
                 </p>
-
               </div>
 
               <div className="mt-4">
@@ -322,7 +318,6 @@ export default function TechnicianBookingTable({
             </div>
           );
         })}
-
       </div>
     </div>
   );
@@ -342,10 +337,10 @@ function BookingActions({
   isUpdating,
   onUpdate,
 }: BookingActionsProps) {
+
   if (booking.status === "REQUESTED") {
     return (
       <div className="flex flex-wrap gap-2">
-
         <button
           type="button"
           disabled={isUpdating}
@@ -377,10 +372,19 @@ function BookingActions({
             ? "Updating..."
             : "Decline"}
         </button>
-
       </div>
     );
   }
+
+  
+  if (booking.status === "ACCEPTED") {
+    return (
+      <span className="text-xs text-muted-foreground">
+        Waiting for customer payment
+      </span>
+    );
+  }
+
 
   if (booking.status === "PAID") {
     return (
@@ -402,6 +406,7 @@ function BookingActions({
     );
   }
 
+  
   if (booking.status === "IN_PROGRESS") {
     return (
       <button
@@ -421,6 +426,7 @@ function BookingActions({
       </button>
     );
   }
+
 
   return (
     <span className="text-xs text-muted-foreground">

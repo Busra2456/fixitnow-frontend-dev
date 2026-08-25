@@ -1,9 +1,69 @@
+
 import Link from "next/link";
 
-export default function TechnicianDashboardPage() {
+import { getMe } from "@/service/getMe";
+
+import { getTechnicianBookings } from "../_actions/technicianBookingActions";
+import { getMyTechnicianServices } from "../_actions/getTechnicianServices";
+import { getTechnicianReviews } from "./_actions/reviewActions";
+
+export default async function TechnicianDashboardPage() {
+  const [bookingResult, serviceResult, meResult] =
+    await Promise.all([
+      getTechnicianBookings(),
+      getMyTechnicianServices(),
+      getMe(),
+    ]);
+
+  const bookings = bookingResult.success
+    ? bookingResult.data
+    : [];
+
+  const services = serviceResult.success
+    ? serviceResult.data
+    : [];
+
+  const technicianId = meResult.success
+    ? meResult.data?.id
+    : null;
+
+  // Get technician reviews
+  const reviewResult = technicianId
+    ? await getTechnicianReviews(technicianId)
+    : {
+        success: false,
+        message: "Technician ID not found",
+        data: [],
+      };
+
+  const reviews = reviewResult.success
+    ? reviewResult.data
+    : [];
+
+  const totalServices = services.length;
+
+  const pendingRequests = bookings.filter(
+    (booking) => booking.status === "REQUESTED"
+  ).length;
+
+  const completedJobs = bookings.filter(
+    (booking) => booking.status === "COMPLETED"
+  ).length;
+
+  const totalEarnings = bookings
+    .filter(
+      (booking) => booking.status === "COMPLETED"
+    )
+    .reduce(
+      (total, booking) =>
+        total + Number(booking.totalPrice),
+      0
+    );
+
   return (
     <div className="min-h-screen bg-muted/30 p-6">
       <div className="mx-auto max-w-6xl">
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">
@@ -15,46 +75,96 @@ export default function TechnicianDashboardPage() {
           </p>
         </div>
 
+        {/* Error Messages */}
+        {!serviceResult.success && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            Failed to load your services:{" "}
+            {serviceResult.message}
+          </div>
+        )}
+
+        {!bookingResult.success && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            Failed to load your bookings:{" "}
+            {bookingResult.message}
+          </div>
+        )}
+
+        {!meResult.success && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            Failed to load technician information:{" "}
+            {meResult.message}
+          </div>
+        )}
+
+        {!reviewResult.success && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            Failed to load reviews:{" "}
+            {reviewResult.message}
+          </div>
+        )}
+
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+          {/* Total Services */}
           <div className="rounded-xl border bg-background p-5 shadow-sm">
             <p className="text-sm text-muted-foreground">
               Total Services
             </p>
 
             <h2 className="mt-2 text-2xl font-bold">
-              0
+              {totalServices}
             </h2>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Services you provide
+            </p>
           </div>
 
+          {/* Pending Requests */}
           <div className="rounded-xl border bg-background p-5 shadow-sm">
             <p className="text-sm text-muted-foreground">
               Pending Requests
             </p>
 
             <h2 className="mt-2 text-2xl font-bold">
-              0
+              {pendingRequests}
             </h2>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Waiting for your response
+            </p>
           </div>
 
+          {/* Completed Jobs */}
           <div className="rounded-xl border bg-background p-5 shadow-sm">
             <p className="text-sm text-muted-foreground">
               Completed Jobs
             </p>
 
             <h2 className="mt-2 text-2xl font-bold">
-              0
+              {completedJobs}
             </h2>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Successfully completed
+            </p>
           </div>
 
+          {/* Total Earnings */}
           <div className="rounded-xl border bg-background p-5 shadow-sm">
             <p className="text-sm text-muted-foreground">
               Total Earnings
             </p>
 
             <h2 className="mt-2 text-2xl font-bold">
-              ৳0
+              ৳{totalEarnings.toLocaleString("en-BD")}
             </h2>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              From completed jobs
+            </p>
           </div>
         </div>
 
@@ -65,7 +175,8 @@ export default function TechnicianDashboardPage() {
           </h2>
 
           <div className="grid gap-4 md:grid-cols-3">
-            {/* Services */}
+
+            {/* Manage Services */}
             <Link
               href="/technician-dashboard/services"
               className="rounded-xl border bg-background p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -83,7 +194,7 @@ export default function TechnicianDashboardPage() {
               </span>
             </Link>
 
-            {/* Bookings */}
+            {/* Manage Bookings */}
             <Link
               href="/technician-dashboard/bookings"
               className="rounded-xl border bg-background p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -121,6 +232,86 @@ export default function TechnicianDashboardPage() {
           </div>
         </div>
 
+        {/* Customer Reviews */}
+        <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold">
+                Customer Reviews
+              </h2>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Reviews from your customers
+              </p>
+            </div>
+
+            <div className="rounded-full bg-muted px-3 py-1 text-sm font-medium">
+              {reviews.length}{" "}
+              {reviews.length === 1
+                ? "Review"
+                : "Reviews"}
+            </div>
+          </div>
+
+          {reviews.length === 0 ? (
+            <div className="mt-6 rounded-lg border border-dashed p-8 text-center">
+              <p className="font-medium">
+                No reviews yet
+              </p>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Customer reviews will appear here after customers review your completed jobs.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-lg border p-4"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+
+                    <div>
+                      <p className="font-semibold">
+                        {review.customer?.name ||
+                          "Customer"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {review.booking?.service?.title ||
+                          "Service"}
+                      </p>
+                    </div>
+
+                    <div className="text-sm">
+                      {"⭐".repeat(
+                        Number(review.rating)
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="mt-4 text-sm leading-6">
+                    {review.comment}
+                  </p>
+
+                  {review.createdAt && (
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      {new Date(
+                        review.createdAt
+                      ).toLocaleDateString("en-BD", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Getting Started */}
         <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
           <h2 className="text-lg font-semibold">
@@ -138,6 +329,7 @@ export default function TechnicianDashboardPage() {
             Create Your First Service
           </Link>
         </div>
+
       </div>
     </div>
   );

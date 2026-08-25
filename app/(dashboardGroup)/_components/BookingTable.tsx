@@ -1,5 +1,7 @@
 
 import PayNowButton from "./PayNowButton";
+import ReviewButton from "./ReviewButton";
+import CancelBookingButton from "./CancelBookingButton";
 import { getCustomerBookings } from "../_actions/customerBookingActions";
 
 type BookingStatus =
@@ -39,6 +41,7 @@ export default async function BookingTable() {
 
   return (
     <div className="rounded-xl border bg-background p-6 shadow-sm">
+      {/* Header */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold">
           Booking History
@@ -49,12 +52,14 @@ export default async function BookingTable() {
         </p>
       </div>
 
+      {/* Error */}
       {!result.success && (
         <p className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-500">
           {result.message}
         </p>
       )}
 
+      {/* No bookings */}
       {bookings.length === 0 ? (
         <div className="rounded-lg border bg-muted/20 p-8 text-center">
           <p className="text-sm font-medium">
@@ -67,7 +72,8 @@ export default async function BookingTable() {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-sm">
+          <table className="w-full min-w-[1000px] text-sm">
+            {/* Table Header */}
             <thead>
               <tr className="border-b text-left">
                 <th className="p-3 font-semibold">
@@ -100,6 +106,7 @@ export default async function BookingTable() {
               </tr>
             </thead>
 
+            {/* Table Body */}
             <tbody>
               {bookings.map((booking) => (
                 <tr
@@ -119,24 +126,28 @@ export default async function BookingTable() {
                   </td>
 
                   {/* Date */}
-                  <td className="p-3 whitespace-nowrap">
+                  <td className="whitespace-nowrap p-3">
                     {new Date(
                       booking.bookingDate
-                    ).toLocaleDateString()}
+                    ).toLocaleDateString("en-US", {
+                      month: "numeric",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </td>
 
                   {/* Time */}
-                  <td className="p-3 whitespace-nowrap">
+                  <td className="whitespace-nowrap p-3">
                     {new Date(
                       booking.bookingDate
-                    ).toLocaleTimeString([], {
+                    ).toLocaleTimeString("en-US", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </td>
 
                   {/* Price */}
-                  <td className="p-3 whitespace-nowrap font-medium">
+                  <td className="whitespace-nowrap p-3 font-medium">
                     ৳
                     {Number(
                       booking.totalPrice
@@ -162,59 +173,68 @@ export default async function BookingTable() {
                                     : "bg-red-200 text-red-800"
                       }`}
                     >
-                      {booking.status.replace(
-                        "_",
-                        " "
-                      )}
+                      {booking.status.replace("_", " ")}
                     </span>
                   </td>
 
                   {/* Action */}
                   <td className="p-3">
-                    <div className="flex min-w-[110px] items-center">
-                      {/* Accepted → Pay Now */}
-                      {booking.status === "ACCEPTED" && (
-                        <PayNowButton
-                          bookingId={booking.id}
-                        />
-                      )}
-
-                      {/* Requested → Waiting */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* REQUESTED */}
                       {booking.status === "REQUESTED" && (
-                        <span className="text-xs font-medium text-muted-foreground">
-                          Waiting...
-                        </span>
+                        <>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Waiting...
+                          </span>
+
+                          <CancelBookingButton
+                            bookingId={booking.id}
+                          />
+                        </>
                       )}
 
-                      {/* Paid → Paid */}
+                      {/* ACCEPTED */}
+                      {booking.status === "ACCEPTED" && (
+                        <>
+                          <PayNowButton
+                            bookingId={booking.id}
+                          />
+
+                          <CancelBookingButton
+                            bookingId={booking.id}
+                          />
+                        </>
+                      )}
+
+                      {/* PAID */}
                       {booking.status === "PAID" && (
                         <span className="text-xs font-medium text-green-600">
                           ✓ Paid
                         </span>
                       )}
 
-                      {/* In Progress */}
+                      {/* IN_PROGRESS */}
                       {booking.status === "IN_PROGRESS" && (
                         <span className="text-xs font-medium text-blue-600">
                           In Progress
                         </span>
                       )}
 
-                      {/* Completed */}
+                      {/* COMPLETED */}
                       {booking.status === "COMPLETED" && (
-                        <span className="text-xs font-medium text-green-600">
-                          Completed
-                        </span>
+                        <ReviewButton
+                          bookingId={booking.id}
+                        />
                       )}
 
-                      {/* Declined */}
+                      {/* DECLINED */}
                       {booking.status === "DECLINED" && (
                         <span className="text-xs font-medium text-red-500">
                           Declined
                         </span>
                       )}
 
-                      {/* Cancelled */}
+                      {/* CANCELLED */}
                       {booking.status === "CANCELLED" && (
                         <span className="text-xs font-medium text-muted-foreground">
                           Cancelled
