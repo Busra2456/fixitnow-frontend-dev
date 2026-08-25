@@ -16,7 +16,7 @@ const AdminDashboardPage = async () => {
   ).length;
 
   const totalBannedUsers = users.filter(
-    (user) => user.activeStatus === "BANNED"
+    (user) => user.activeStatus === "BLOCKED"
   ).length;
 
   return (

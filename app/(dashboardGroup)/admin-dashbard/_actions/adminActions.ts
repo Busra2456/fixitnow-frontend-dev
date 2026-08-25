@@ -9,7 +9,7 @@ export type AdminUser = {
   name: string;
   email: string;
   role: "CUSTOMER" | "TECHNICIAN" | "ADMIN";
-  activeStatus?: "ACTIVE" | "BANNED";
+  activeStatus?: "ACTIVE" | "BLOCKED";
 };
 
 type AdminUsersResponse = {
@@ -23,6 +23,25 @@ type UpdateUserStatusResponse = {
   message?: string;
   data?: AdminUser;
 };
+
+export type AdminCategory = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
+type CategoriesResponse = {
+  success: boolean;
+  message?: string;
+  data: AdminCategory[];
+};
+
+type CategoryResponse = {
+  success: boolean;
+  message?: string;
+  data?: AdminCategory;
+};
+
 
 const getAccessToken = async () => {
   const cookieStore = await cookies();
@@ -81,7 +100,7 @@ export const getAdminUsers = async (): Promise<AdminUsersResponse> => {
 // Ban / Unban user
 export const updateUserStatus = async (
   userId: string,
-  activeStatus: "ACTIVE" | "BANNED"
+  activeStatus: "ACTIVE" | "BLOCKED"
 ): Promise<UpdateUserStatusResponse> => {
   try {
     const accessToken = await getAccessToken();
@@ -134,23 +153,6 @@ export const updateUserStatus = async (
   }
 };
 
-export type AdminCategory = {
-  id: string;
-  name: string;
-  description?: string;
-};
-
-type CategoriesResponse = {
-  success: boolean;
-  message?: string;
-  data: AdminCategory[];
-};
-
-type CategoryResponse = {
-  success: boolean;
-  message?: string;
-  data?: AdminCategory;
-};
 
 // Get all categories
 export const getAdminCategories =

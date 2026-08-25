@@ -65,7 +65,7 @@ const UserManagementTable = ({
     currentStatus: AdminUser["activeStatus"]
   ) => {
     const newStatus =
-      currentStatus === "BANNED" ? "ACTIVE" : "BANNED";
+      currentStatus === "BLOCKED" ? "ACTIVE" : "BLOCKED";
 
     try {
       setUpdatingId(userId);
@@ -83,7 +83,7 @@ const UserManagementTable = ({
       }
 
       toast.success(
-        newStatus === "BANNED"
+        newStatus === "BLOCKED"
           ? "User banned successfully"
           : "User unbanned successfully"
       );
@@ -150,7 +150,7 @@ const UserManagementTable = ({
               {paginatedUsers.length > 0 ? (
                 paginatedUsers.map((user) => {
                   const isBanned =
-                    user.activeStatus === "BANNED";
+                    user.activeStatus === "BLOCKED";
 
                   const isUpdating =
                     updatingId === user.id;
@@ -191,7 +191,7 @@ const UserManagementTable = ({
                           }`}
                         >
                           {isBanned
-                            ? "BANNED"
+                            ? "BLOCKED"
                             : "ACTIVE"}
                         </span>
                       </td>
