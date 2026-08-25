@@ -1,5 +1,5 @@
 import { getServices } from "../_actions/getServices";
-import ServiceCard from "../_components/ServiceCard";
+import ServicesFilter from "../_components/ServiceFilters";
 
 export default async function ServicesPage() {
   const result = await getServices();
@@ -9,9 +9,7 @@ export default async function ServicesPage() {
       <div className="min-h-screen bg-muted/30 p-6">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold">
-              Services
-            </h1>
+            <h1 className="text-3xl font-bold">Services</h1>
 
             <p className="mt-2 text-muted-foreground">
               Find the right service for your needs.
@@ -30,39 +28,37 @@ export default async function ServicesPage() {
 
   const services = result.data ?? [];
 
+  const categories = Array.from(
+    new Map(
+      services
+        .filter((service) => service.category)
+        .map((service) => [
+          service.category!.id,
+          {
+            id: service.category!.id,
+            name: service.category!.name,
+          },
+        ])
+    ).values()
+  );
+
   return (
     <div className="min-h-screen bg-muted/30 p-6">
       <div className="mx-auto max-w-6xl">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
-            Services
-          </h1>
+          <h1 className="text-3xl font-bold">Services</h1>
 
           <p className="mt-2 text-muted-foreground">
             Find the right service for your needs.
           </p>
         </div>
 
-        {services.length === 0 ? (
-          <div className="rounded-xl border bg-background p-8 text-center shadow-sm">
-            <h2 className="font-semibold">
-              No services found
-            </h2>
-
-            <p className="mt-2 text-sm text-muted-foreground">
-              No services are available right now.
-            </p>
-          </div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
-              />
-            ))}
-          </div>
-        )}
+        {/* Search + Filter + Service Grid */}
+        <ServicesFilter
+          services={services}
+          categories={categories}
+        />
       </div>
     </div>
   );
