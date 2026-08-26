@@ -1,15 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { createReview } from "../_actions/customerReviewActions";
+import {
+  FaStar,
+  FaTimes,
+  FaCheck,
+  FaCreditCard,
+  FaTimesCircle
+} from "react-icons/fa";
 
-type ReviewButtonProps = {
+import { createReview } from "../_actions/customerBookingActions";
+import { createPayment } from "../../_actions/customerPaymentActions";
+import { cancelBooking } from "../_actions/customerBookingActions";
+
+type CancelBookingButtonProps = {
   bookingId: string;
 };
 
-export default function ReviewButton({
-  bookingId,
-}: ReviewButtonProps) {
+type ButtonProps = {
+  bookingId: string;
+};
+
+
+export function ReviewButton({ bookingId }: ButtonProps) {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -21,11 +34,13 @@ export default function ReviewButton({
 
     setMessage("");
 
+    // Comment validation
     if (!comment.trim()) {
       setMessage("Please write a comment.");
       return;
     }
 
+    // Rating validation
     if (rating < 1 || rating > 5) {
       setMessage("Please select a rating between 1 and 5.");
       return;
@@ -76,22 +91,24 @@ export default function ReviewButton({
 
   return (
     <>
-      {/* Leave Review Button */}
+
       <button
         type="button"
         onClick={() => {
           setOpen(true);
           setMessage("");
         }}
-        className="rounded-md bg-black px-3 py-2 text-xs font-medium text-white transition hover:opacity-90"
+        className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90"
       >
+        <FaStar className="text-yellow-300" />
         Leave Review
       </button>
 
-      {/* Modal */}
+
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-xl bg-background p-6 shadow-xl">
+
             {/* Header */}
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
@@ -100,8 +117,7 @@ export default function ReviewButton({
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Rate your technician and share your
-                  experience.
+                  Rate your technician and share your experience.
                 </p>
               </div>
 
@@ -110,9 +126,9 @@ export default function ReviewButton({
                 onClick={handleClose}
                 disabled={loading}
                 aria-label="Close review modal"
-                className="text-2xl leading-none text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-gray-500 transition hover:bg-muted hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                ×
+                <FaTimes />
               </button>
             </div>
 
@@ -130,18 +146,20 @@ export default function ReviewButton({
                     onClick={() => setRating(star)}
                     disabled={loading}
                     aria-label={`Rate ${star} out of 5`}
-                    className={`text-3xl transition hover:scale-110 ${
-                      star <= rating
-                        ? "text-yellow-400"
-                        : "text-gray-300"
-                    } disabled:cursor-not-allowed`}
+                    className="text-2xl transition hover:scale-110 disabled:cursor-not-allowed"
                   >
-                    ★
+                    <FaStar
+                      className={
+                        star <= rating
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }
+                    />
                   </button>
                 ))}
               </div>
 
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 {rating} out of 5
               </p>
             </div>
@@ -188,21 +206,26 @@ export default function ReviewButton({
 
             {/* Actions */}
             <div className="flex justify-end gap-3">
+              {/* Cancel */}
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="rounded-md border px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
               >
+                <FaTimes />
                 Cancel
               </button>
 
+              {/* Submit */}
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !comment.trim()}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
+                <FaCheck />
+
                 {loading
                   ? "Submitting..."
                   : "Submit Review"}
@@ -212,5 +235,123 @@ export default function ReviewButton({
         </div>
       )}
     </>
+  );
+}
+
+
+
+export function PayNowButton({ bookingId }: ButtonProps) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handlePayment = async () => {
+    if (loading) return;
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const result = await createPayment(bookingId);
+
+      if (!result.success) {
+        setError(
+          result.message || "Payment failed."
+        );
+        return;
+      }
+
+      const gatewayUrl = result.data?.gatewayUrl;
+
+      if (!gatewayUrl) {
+        setError(
+          "Payment gateway URL was not received."
+        );
+        return;
+      }
+
+      // Go to payment gateway
+      window.location.href = gatewayUrl;
+    } catch (error) {
+      console.error("Payment error:", error);
+
+      setError(
+        "Something went wrong while starting payment."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      {/* Pay Button */}
+      <button
+        type="button"
+        onClick={handlePayment}
+        disabled={loading}
+        className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <FaCreditCard />
+
+        {loading
+          ? "Processing..."
+          : "Pay Now"}
+      </button>
+
+      {/* Error */}
+      {error && (
+        <p className="max-w-[220px] text-right text-xs text-red-500">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+  
+export default function CancelBookingButton({
+  bookingId,
+}: CancelBookingButtonProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handleCancel = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel this booking?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+
+      const result = await cancelBooking(bookingId);
+
+      if (!result.success) {
+        alert(result.message || "Failed to cancel booking.");
+        return;
+      }
+
+      alert("Booking cancelled successfully.");
+
+      window.location.reload();
+    } catch {
+      alert(
+        "Something went wrong while cancelling the booking."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCancel}
+      disabled={loading}
+      className="inline-flex items-center gap-2 rounded-md bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-200 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <FaTimesCircle />
+
+      {loading ? "Cancelling..." : "Cancel Booking"}
+    </button>
   );
 }

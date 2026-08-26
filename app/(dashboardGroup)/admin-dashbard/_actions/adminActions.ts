@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 const API_URL = process.env.BACKEND_API_URL;
 
+
 export type AdminUser = {
   id: string;
   name: string;
@@ -27,7 +28,7 @@ type UpdateUserStatusResponse = {
 export type AdminCategory = {
   id: string;
   name: string;
-  description?: string;
+  description?: string | null;
 };
 
 type CategoriesResponse = {
@@ -42,62 +43,71 @@ type CategoryResponse = {
   data?: AdminCategory;
 };
 
-
 const getAccessToken = async () => {
   const cookieStore = await cookies();
 
   return cookieStore.get("accessToken")?.value;
 };
 
-// Get all users
-export const getAdminUsers = async (): Promise<AdminUsersResponse> => {
-  try {
-    const accessToken = await getAccessToken();
 
-    if (!accessToken) {
+export const getAdminUsers =
+  async (): Promise<AdminUsersResponse> => {
+    try {
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        return {
+          success: false,
+          message: "Unauthorized",
+          data: [],
+        };
+      }
+
+      if (!API_URL) {
+        return {
+          success: false,
+          message: "Backend API URL is not configured",
+          data: [],
+        };
+      }
+
+      const res = await fetch(`${API_URL}/api/users`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        cache: "no-store",
+      });
+
+      const result: unknown = await res.json();
+
+      if (!res.ok) {
+        const errorResult = result as {
+          message?: string;
+        };
+
+        return {
+          success: false,
+          message:
+            errorResult.message ||
+            "Failed to fetch users",
+          data: [],
+        };
+      }
+
+      return result as AdminUsersResponse;
+    } catch (error) {
+      console.error("getAdminUsers error:", error);
+
       return {
         success: false,
-        message: "Unauthorized",
+        message: "Something went wrong",
         data: [],
       };
     }
+  };
 
-    const res = await fetch(`${API_URL}/api/users`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      cache: "no-store",
-    });
 
-    const result: unknown = await res.json();
-
-    if (!res.ok) {
-      const errorResult = result as {
-        message?: string;
-      };
-
-      return {
-        success: false,
-        message:
-          errorResult.message || "Failed to fetch users",
-        data: [],
-      };
-    }
-
-    return result as AdminUsersResponse;
-  } catch (error) {
-    console.error("getAdminUsers error:", error);
-
-    return {
-      success: false,
-      message: "Something went wrong",
-      data: [],
-    };
-  }
-};
-
-// Ban / Unban user
 export const updateUserStatus = async (
   userId: string,
   activeStatus: "ACTIVE" | "BLOCKED"
@@ -109,6 +119,13 @@ export const updateUserStatus = async (
       return {
         success: false,
         message: "Unauthorized",
+      };
+    }
+
+    if (!API_URL) {
+      return {
+        success: false,
+        message: "Backend API URL is not configured",
       };
     }
 
@@ -144,7 +161,10 @@ export const updateUserStatus = async (
 
     return result as UpdateUserStatusResponse;
   } catch (error) {
-    console.error("updateUserStatus error:", error);
+    console.error(
+      "updateUserStatus error:",
+      error
+    );
 
     return {
       success: false,
@@ -153,8 +173,6 @@ export const updateUserStatus = async (
   }
 };
 
-
-// Get all categories
 export const getAdminCategories =
   async (): Promise<CategoriesResponse> => {
     try {
@@ -168,13 +186,24 @@ export const getAdminCategories =
         };
       }
 
-      const res = await fetch(`${API_URL}/api/categories`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        cache: "no-store",
-      });
+      if (!API_URL) {
+        return {
+          success: false,
+          message: "Backend API URL is not configured",
+          data: [],
+        };
+      }
+
+      const res = await fetch(
+        `${API_URL}/api/categories`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          cache: "no-store",
+        }
+      );
 
       const result: unknown = await res.json();
 
@@ -207,10 +236,9 @@ export const getAdminCategories =
     }
   };
 
-// Create category
 export const createCategory = async (
   name: string,
-  description?: string
+  description: string
 ): Promise<CategoryResponse> => {
   try {
     const accessToken = await getAccessToken();
@@ -222,17 +250,28 @@ export const createCategory = async (
       };
     }
 
-    const res = await fetch(`${API_URL}/api/categories`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        name,
-        description,
-      }),
-    });
+    if (!API_URL) {
+      return {
+        success: false,
+        message: "Backend API URL is not configured",
+      };
+    }
+
+    const res = await fetch(
+      `${API_URL}/api/categories`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          name,
+          description,
+        }),
+        cache: "no-store",
+      }
+    );
 
     const result: unknown = await res.json();
 
@@ -263,7 +302,75 @@ export const createCategory = async (
   }
 };
 
-// Delete category
+
+export const updateCategory = async (
+  categoryId: string,
+  name: string,
+  description: string
+): Promise<CategoryResponse> => {
+  try {
+    const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+      return {
+        success: false,
+        message: "Unauthorized",
+      };
+    }
+
+    if (!API_URL) {
+      return {
+        success: false,
+        message: "Backend API URL is not configured",
+      };
+    }
+
+    const res = await fetch(
+      `${API_URL}/api/categories/${categoryId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          name,
+          description,
+        }),
+        cache: "no-store",
+      }
+    );
+
+    const result: unknown = await res.json();
+
+    if (!res.ok) {
+      const errorResult = result as {
+        message?: string;
+      };
+
+      return {
+        success: false,
+        message:
+          errorResult.message ||
+          "Failed to update category",
+      };
+    }
+
+    return result as CategoryResponse;
+  } catch (error) {
+    console.error(
+      "updateCategory error:",
+      error
+    );
+
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+};
+
+
 export const deleteCategory = async (
   categoryId: string
 ): Promise<CategoryResponse> => {
@@ -277,6 +384,13 @@ export const deleteCategory = async (
       };
     }
 
+    if (!API_URL) {
+      return {
+        success: false,
+        message: "Backend API URL is not configured",
+      };
+    }
+
     const res = await fetch(
       `${API_URL}/api/categories/${categoryId}`,
       {
@@ -284,6 +398,7 @@ export const deleteCategory = async (
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        cache: "no-store",
       }
     );
 

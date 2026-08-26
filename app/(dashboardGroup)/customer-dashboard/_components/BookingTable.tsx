@@ -1,7 +1,6 @@
 
-import PayNowButton from "./PayNowButton";
-import ReviewButton from "./ReviewButton";
-import CancelBookingButton from "./CancelBookingButton";
+import ReviewButton, { PayNowButton } from "./AllButton";
+import CancelBookingButton from "./AllButton";
 import { getCustomerBookings } from "../_actions/customerBookingActions";
 
 type BookingStatus =

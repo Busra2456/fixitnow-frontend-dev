@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
 
     if (userRole === "ADMIN") {
       return NextResponse.redirect(
-        new URL("/admin-dashbard/admin", request.url)
+        new URL("/admin-dashbard", request.url)
       );
     }
   }
@@ -100,7 +100,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Admin route protection
-  if (pathname.startsWith("/admin-dashbard/admin")) {
+  if (pathname.startsWith("/admin-dashbard")) {
     if (userRole !== "ADMIN") {
       return NextResponse.redirect(
         new URL("/not-found", request.url)

@@ -1,3 +1,13 @@
+import Link from "next/link";
+import {
+  FaUsers,
+  FaUserTie,
+  FaUserCheck,
+  FaUserSlash,
+  FaUserCog,
+  FaTags,
+} from "react-icons/fa";
+
 import { getAdminUsers } from "./_actions/adminActions";
 
 const AdminDashboardPage = async () => {
@@ -19,124 +29,153 @@ const AdminDashboardPage = async () => {
     (user) => user.activeStatus === "BLOCKED"
   ).length;
 
+  const stats = [
+    {
+      title: "Total Users",
+      value: totalUsers,
+      description: "All registered users",
+      icon: FaUsers,
+    },
+    {
+      title: "Customers",
+      value: totalCustomers,
+      description: "Registered customers",
+      icon: FaUserCheck,
+    },
+    {
+      title: "Technicians",
+      value: totalTechnicians,
+      description: "Registered technicians",
+      icon: FaUserTie,
+    },
+    {
+      title: "Banned Users",
+      value: totalBannedUsers,
+      description: "Currently banned users",
+      icon: FaUserSlash,
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Admin Dashboard
-        </h1>
+    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage users and monitor your FixItNow platform.
-        </p>
-      </div>
+        {/* ================= HEADER ================= */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            Admin Dashboard
+          </h1>
 
-      {/* Error */}
-      {!result?.success && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-          {result?.message || "Failed to load dashboard data"}
-        </div>
-      )}
-
-      {/* Statistics */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Users */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Total Users
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalUsers}
-          </h2>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            All registered users
+          <p className="mt-1 text-sm text-gray-500">
+            Manage users and monitor your FixItNow platform.
           </p>
         </div>
 
-        {/* Customers */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Customers
-          </p>
+        {/* ================= ERROR ================= */}
+        {!result?.success && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            {result?.message ||
+              "Failed to load dashboard data"}
+          </div>
+        )}
 
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalCustomers}
-          </h2>
+        {/* ================= STATISTICS ================= */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Registered customers
-          </p>
+            return (
+              <div
+                key={stat.title}
+                className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      {stat.title}
+                    </p>
+
+                    <h2 className="mt-2 text-2xl font-bold text-gray-900">
+                      {stat.value}
+                    </h2>
+                  </div>
+
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+                    <Icon className="text-lg text-primary" />
+                  </div>
+                </div>
+
+                <p className="mt-2 text-xs text-gray-500">
+                  {stat.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Technicians */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Technicians
-          </p>
+        {/* ================= QUICK ACTIONS ================= */}
+        <section>
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Quick Actions
+            </h2>
 
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalTechnicians}
-          </h2>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            Registered technicians
-          </p>
-        </div>
-
-        {/* Banned Users */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Banned Users
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalBannedUsers}
-          </h2>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            Currently banned users
-          </p>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-xl font-semibold">
-          Quick Actions
-        </h2>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <a
-            href="/admin-dashbard/users"
-            className="rounded-xl border bg-white p-6 shadow-sm transition hover:border-gray-400 hover:shadow-md"
-          >
-            <h3 className="font-semibold">
-              Manage Users
-            </h3>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              View, ban and unban platform users.
+            <p className="mt-1 text-sm text-gray-500">
+              Quickly manage your platform.
             </p>
-          </a>
+          </div>
 
-          <a
-            href="/admin-dashbard/categories"
-            className="rounded-xl border bg-white p-6 shadow-sm transition hover:border-gray-400 hover:shadow-md"
-          >
-            <h3 className="font-semibold">
-              Manage Categories
-            </h3>
+          <div className="grid gap-4 sm:grid-cols-2">
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add, edit and remove service categories.
-            </p>
-          </a>
-        </div>
+            {/* Manage Users */}
+            <Link
+              href="/admin-dashbard/users"
+              className="rounded-xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+                  <FaUserCog className="text-lg text-primary" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    Manage Users
+                  </h3>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    View, ban and unban platform users.
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            {/* Manage Categories */}
+            <Link
+              href="/admin-dashbard/categories"
+              className="rounded-xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+                  <FaTags className="text-lg text-primary" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    Manage Categories
+                  </h3>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Add, edit and remove service categories.
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+          </div>
+        </section>
+
       </div>
-    </div>
+    </main>
   );
 };
 

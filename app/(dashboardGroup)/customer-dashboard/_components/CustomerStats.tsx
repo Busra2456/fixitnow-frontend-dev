@@ -1,12 +1,17 @@
 "use client";
 
-import {
-  CalendarCheck,
-  Clock3,
-  CheckCircle2,
-  Wallet,
-} from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
+import {
+  FaCalendarCheck,
+  FaClock,
+  FaCheckCircle,
+  FaWallet,
+  FaSearch,
+  FaUsers,
+} from "react-icons/fa";
+
 import { getCustomerBookings } from "../_actions/customerBookingActions";
 
 type BookingStatus =
@@ -24,7 +29,7 @@ type Booking = {
   status: BookingStatus;
 };
 
-const CustomerStats = () => {
+export const CustomerStats = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,16 +84,20 @@ const CustomerStats = () => {
       )
     )
     .reduce(
-      (total, booking) => total + booking.totalPrice,
+      (total, booking) =>
+        total + Number(booking.totalPrice),
       0
     );
+
 
   const stats = [
     {
       title: "Total Bookings",
-      value: loading ? "..." : totalBookings.toString(),
+      value: loading
+        ? "..."
+        : totalBookings.toString(),
       description: "All your bookings",
-      icon: CalendarCheck,
+      icon: FaCalendarCheck,
     },
     {
       title: "Pending Bookings",
@@ -96,7 +105,7 @@ const CustomerStats = () => {
         ? "..."
         : pendingBookings.toString(),
       description: "Waiting for technician",
-      icon: Clock3,
+      icon: FaClock,
     },
     {
       title: "Completed Jobs",
@@ -104,7 +113,7 @@ const CustomerStats = () => {
         ? "..."
         : completedJobs.toString(),
       description: "Successfully completed",
-      icon: CheckCircle2,
+      icon: FaCheckCircle,
     },
     {
       title: "Total Spent",
@@ -112,10 +121,11 @@ const CustomerStats = () => {
         ? "..."
         : `৳${totalSpent.toLocaleString("en-BD")}`,
       description: "Total service payment",
-      icon: Wallet,
+      icon: FaWallet,
     },
   ];
 
+  
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => {
@@ -124,22 +134,25 @@ const CustomerStats = () => {
         return (
           <div
             key={stat.title}
-            className="rounded-xl border bg-background p-5 shadow-sm transition-shadow hover:shadow-md"
+            className="rounded-xl border bg-background p-5 shadow-sm transition hover:shadow-md"
           >
+            {/* Top */}
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-muted-foreground">
                 {stat.title}
               </p>
 
-              <div className="rounded-lg bg-primary/10 p-2">
-                <Icon className="h-5 w-5 text-primary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <Icon className="text-lg text-primary" />
               </div>
             </div>
 
+            {/* Value */}
             <h2 className="mt-4 text-2xl font-bold">
               {stat.value}
             </h2>
 
+            {/* Description */}
             <p className="mt-1 text-xs text-muted-foreground">
               {stat.description}
             </p>
@@ -150,4 +163,68 @@ const CustomerStats = () => {
   );
 };
 
-export default CustomerStats;
+export const QuickActions = () => {
+  return (
+    <section>
+      {/* Heading */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">
+          Quick Actions
+        </h2>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Quickly find the service or technician you need.
+        </p>
+      </div>
+
+      {/* Action Cards */}
+      <div className="grid gap-4 sm:grid-cols-2">
+
+        {/* Browse Services */}
+        <Link
+          href="/services"
+          className="group rounded-xl border bg-background p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <FaSearch className="text-lg text-primary" />
+            </div>
+
+            <div>
+              <h3 className="font-semibold">
+                Browse Services
+              </h3>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Find the right service for your needs.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Find Technicians */}
+        <Link
+          href="/technicians"
+          className="group rounded-xl border bg-background p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <FaUsers className="text-lg text-primary" />
+            </div>
+
+            <div>
+              <h3 className="font-semibold">
+                Find Technicians
+              </h3>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Find trusted technicians for your service.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+      </div>
+    </section>
+  );
+};

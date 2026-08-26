@@ -44,28 +44,34 @@ export type IPost = {
 };
 
 type IUser = {
-    success: boolean,
-    message: string,
-    data: {
-        profile: {
-            id: string,
-            name: string,
-            email: string,
-            activeStatus: string,
-            role: string,
-            createdAt: string,
-            updatedAt: string,
-            profile: {
-                id: string,
-                profilePhoto: string,
-                bio: string | null,
-                userId: string,
-                createdAt: string,
-                updatedAt: string
-            }
-        }
-    }
-}
+  success: boolean;
+  message: string;
+  statusCode?: number;
+
+  data: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    activeStatus: string;
+
+    technicianProfile: {
+      id: string;
+      experience: number;
+      bio: string | null;
+      location: string;
+      rating: number;
+      isAvailable: boolean;
+      availableFrom: string | null;
+      availableTo: string | null;
+      image: string | null;
+      userId: string;
+    } | null;
+  };
+};
 
 export type NavbarProps = {
     user: IUser

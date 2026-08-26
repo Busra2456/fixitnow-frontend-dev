@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 
 import { getMe } from "@/service/getMe";
@@ -16,11 +15,11 @@ export default async function TechnicianDashboardPage() {
     ]);
 
   const bookings = bookingResult.success
-    ? bookingResult.data
+    ? bookingResult.data ?? []
     : [];
 
   const services = serviceResult.success
-    ? serviceResult.data
+    ? serviceResult.data ?? []
     : [];
 
   const technicianId = meResult.success
@@ -37,8 +36,10 @@ export default async function TechnicianDashboardPage() {
       };
 
   const reviews = reviewResult.success
-    ? reviewResult.data
+    ? reviewResult.data ?? []
     : [];
+
+  
 
   const totalServices = services.length;
 
@@ -64,47 +65,54 @@ export default async function TechnicianDashboardPage() {
     <div className="min-h-screen bg-muted/30 p-6">
       <div className="mx-auto max-w-6xl">
 
-        {/* Header */}
+        
         <div className="mb-8">
           <h1 className="text-3xl font-bold">
             Technician Dashboard
           </h1>
 
           <p className="mt-2 text-muted-foreground">
-            Manage your services, bookings, availability and earnings.
+            Manage your services, bookings, availability
+            and earnings.
           </p>
         </div>
 
-        {/* Error Messages */}
+      
+
         {!serviceResult.success && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
             Failed to load your services:{" "}
-            {serviceResult.message}
+            {serviceResult.message ||
+              "Unknown error"}
           </div>
         )}
 
         {!bookingResult.success && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
             Failed to load your bookings:{" "}
-            {bookingResult.message}
+            {bookingResult.message ||
+              "Unknown error"}
           </div>
         )}
 
         {!meResult.success && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
             Failed to load technician information:{" "}
-            {meResult.message}
+            {meResult.message ||
+              "Unknown error"}
           </div>
         )}
 
         {!reviewResult.success && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
             Failed to load reviews:{" "}
-            {reviewResult.message}
+            {reviewResult.message ||
+              "Unknown error"}
           </div>
         )}
 
-        {/* Stats */}
+        
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
           {/* Total Services */}
@@ -159,7 +167,8 @@ export default async function TechnicianDashboardPage() {
             </p>
 
             <h2 className="mt-2 text-2xl font-bold">
-              ৳{totalEarnings.toLocaleString("en-BD")}
+              ৳
+              {totalEarnings.toLocaleString("en-BD")}
             </h2>
 
             <p className="mt-1 text-xs text-muted-foreground">
@@ -168,7 +177,6 @@ export default async function TechnicianDashboardPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="mt-8">
           <h2 className="mb-4 text-xl font-semibold">
             Quick Actions
@@ -186,7 +194,8 @@ export default async function TechnicianDashboardPage() {
               </h2>
 
               <p className="mt-2 text-sm text-muted-foreground">
-                Create and manage the services you provide.
+                Create, view and delete the services
+                you provide.
               </p>
 
               <span className="mt-4 inline-block text-sm font-medium text-primary">
@@ -204,7 +213,8 @@ export default async function TechnicianDashboardPage() {
               </h2>
 
               <p className="mt-2 text-sm text-muted-foreground">
-                Accept, decline and complete customer bookings.
+                Accept, decline and complete customer
+                bookings.
               </p>
 
               <span className="mt-4 inline-block text-sm font-medium text-primary">
@@ -232,8 +242,10 @@ export default async function TechnicianDashboardPage() {
           </div>
         </div>
 
-        {/* Customer Reviews */}
+        
+
         <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
+
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">
@@ -253,6 +265,7 @@ export default async function TechnicianDashboardPage() {
             </div>
           </div>
 
+          {/* No Reviews */}
           {reviews.length === 0 ? (
             <div className="mt-6 rounded-lg border border-dashed p-8 text-center">
               <p className="font-medium">
@@ -260,10 +273,13 @@ export default async function TechnicianDashboardPage() {
               </p>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Customer reviews will appear here after customers review your completed jobs.
+                Customer reviews will appear here
+                after customers review your completed
+                jobs.
               </p>
             </div>
           ) : (
+            /* Reviews */
             <div className="mt-6 space-y-4">
               {reviews.map((review) => (
                 <div
@@ -272,6 +288,7 @@ export default async function TechnicianDashboardPage() {
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 
+                    {/* Customer */}
                     <div>
                       <p className="font-semibold">
                         {review.customer?.name ||
@@ -279,11 +296,12 @@ export default async function TechnicianDashboardPage() {
                       </p>
 
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {review.booking?.service?.title ||
-                          "Service"}
+                        {review.booking?.service
+                          ?.title || "Service"}
                       </p>
                     </div>
 
+                    {/* Rating */}
                     <div className="text-sm">
                       {"⭐".repeat(
                         Number(review.rating)
@@ -291,19 +309,24 @@ export default async function TechnicianDashboardPage() {
                     </div>
                   </div>
 
+                  {/* Comment */}
                   <p className="mt-4 text-sm leading-6">
                     {review.comment}
                   </p>
 
+                  {/* Date */}
                   {review.createdAt && (
                     <p className="mt-3 text-xs text-muted-foreground">
                       {new Date(
                         review.createdAt
-                      ).toLocaleDateString("en-BD", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      ).toLocaleDateString(
+                        "en-BD",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </p>
                   )}
                 </div>
@@ -312,14 +335,15 @@ export default async function TechnicianDashboardPage() {
           )}
         </div>
 
-        {/* Getting Started */}
+        
         <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
           <h2 className="text-lg font-semibold">
             Getting Started
           </h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Start by creating a service that customers can book.
+            Start by creating a service that customers
+            can book.
           </p>
 
           <Link

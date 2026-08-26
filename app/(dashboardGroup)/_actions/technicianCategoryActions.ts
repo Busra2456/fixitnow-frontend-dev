@@ -1,4 +1,3 @@
-
 "use server";
 
 import { cookies } from "next/headers";
@@ -12,26 +11,26 @@ const getAccessToken = async () => {
 };
 
 export const getTechnicianCategories = async () => {
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return {
+      success: false,
+      message: "User not authenticated",
+      data: [],
+    };
+  }
+
+  if (!API_URL) {
+    return {
+      success: false,
+      message: "BACKEND_API_URL is not configured",
+      data: [],
+    };
+  }
+
   try {
-    const accessToken = await getAccessToken();
-
-    if (!accessToken) {
-      return {
-        success: false,
-        message: "User not authenticated",
-        data: [],
-      };
-    }
-
-    if (!API_URL) {
-      return {
-        success: false,
-        message: "Backend API URL is not configured",
-        data: [],
-      };
-    }
-
-    const res = await fetch(`${API_URL}/api/categories`, {
+    const response = await fetch(`${API_URL}/api/categories`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -40,31 +39,31 @@ export const getTechnicianCategories = async () => {
       cache: "no-store",
     });
 
-    const contentType = res.headers.get("content-type");
+    const text = await response.text();
 
-    if (!contentType?.includes("application/json")) {
+    let result;
+
+    try {
+      result = JSON.parse(text);
+    } catch {
       return {
         success: false,
-        message: `Backend returned ${res.status} instead of JSON`,
+        message: `Server returned ${response.status} instead of JSON.`,
         data: [],
+        statusCode: response.status,
       };
     }
 
-    const result = await res.json();
-
     return {
       ...result,
-      statusCode: res.status,
+      statusCode: response.status,
     };
   } catch (error) {
-    console.error(
-      "Failed to load technician categories:",
-      error
-    );
+    console.error("Get technician categories failed:", error);
 
     return {
       success: false,
-      message: "Failed to load categories",
+      message: "Could not connect to backend.",
       data: [],
     };
   }
