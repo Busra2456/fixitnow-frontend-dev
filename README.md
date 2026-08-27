@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FixItNow - Home Service Platform 
 
-## Getting Started
+FixItNow is a modern and responsive home service marketplace built with Next.js.
 
-First, run the development server:
+Customers can find services, view technicians, book available time slots and track their bookings.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Technicians can create their profiles, manage availability and handle customer booking requests.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Admins can manage users, bookings and service categories.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Live Links
 
-## Learn More
+### Frontend
 
-To learn more about Next.js, take a look at the following resources:
+https://fixitnow-frontend-dev-5dun.vercel.app
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+https://fixitnow-backend-uy5z.vercel.
 
-## Deploy on Vercel
+## GitHub
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Frontend:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+https://github.com/Busra2456/fixitnow-frontend-dev
+
+### Backend:
+
+https://github.com/Busra2456/fixitnow-backend-
+---
+
+##  Main Features
+
+###  Customer
+
+- Register and Login
+- Browse available services
+- Search and filter services
+- View technician profiles
+- Check technician ratings and experience
+- Select available date and time
+- Create booking requests
+- View booking history
+- Cancel eligible bookings
+- Make payment after technician accepts booking
+- View payment status
+- Leave reviews after completing a service
+
+###  Technician
+
+- Technician registration and login
+- Create and update technician profile
+- Add experience, skills and location
+- Manage service information
+- Set available working hours
+- Manage booking requests
+- Accept or decline bookings
+- Mark booking as In Progress
+- Mark booking as Completed
+- View upcoming jobs
+
+###  Admin
+
+- Admin dashboard
+- View platform statistics
+- Manage users
+- Ban and unban users
+- Manage service categories
+- View platform bookings
+- Monitor overall platform activity
+
+---
+
+##  Customer Flow
+
+```text
+Register / Login
+      ↓
+Browse Services
+      ↓
+View Technician
+      ↓
+Select Service
+      ↓
+Select Date & Time
+      ↓
+Create Booking
+      ↓
+Wait for Technician
+      ↓
+Technician Accepts
+      ↓
+Make Payment
+      ↓
+Payment Success
+      ↓
+Track Booking
+      ↓
+Leave Review
