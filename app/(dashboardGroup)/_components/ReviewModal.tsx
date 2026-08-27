@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createReview } from "../_actions/customerReviewActions";
+import { createReview } from "../customer-dashboard/_actions/customerBookingActions";
 
 interface ReviewModalProps {
   bookingId: string;
