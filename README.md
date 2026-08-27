@@ -15,6 +15,7 @@ Admins can manage users, service categories, bookings, and monitor overall platf
 ### Frontend
 
 https://fixitnow-frontend-dev-5dun.vercel.app
+
 ### Backend
 
 https://fixitnow-backend-uy5z.vercel.app

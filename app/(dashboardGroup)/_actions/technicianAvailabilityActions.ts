@@ -22,32 +22,43 @@ export const getTechnicianAvailability = async () => {
     };
   }
 
-  const response = await fetch(
-    `${API_URL}/api/technicians/profile`,
-    {
-      method: "GET",
-      headers: {
-        Cookie: `accessToken=${accessToken}`,
-      },
-      cache: "no-store",
+  try {
+    const response = await fetch(
+      `${API_URL}/api/technicians/profile`,
+      {
+        method: "GET",
+        headers: {
+          Cookie: `accessToken=${accessToken}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message:
+          result.message || "Failed to fetch availability.",
+        data: null,
+      };
     }
-  );
 
-  const result = await response.json();
+    return {
+      success: true,
+      message: result.message || "Availability fetched successfully.",
+      data: result.data,
+    };
+  } catch (error) {
+    console.error("Get availability error:", error);
 
-  if (!response.ok) {
     return {
       success: false,
-      message: result.message || "Failed to fetch availability",
+      message: "Something went wrong while fetching availability.",
       data: null,
     };
   }
-
-  return {
-    success: true,
-    message: "Availability fetched successfully",
-    data: result.data,
-  };
 };
 
 export const updateTechnicianAvailability = async (
@@ -60,33 +71,49 @@ export const updateTechnicianAvailability = async (
     return {
       success: false,
       message: "Unauthorized",
+      data: null,
     };
   }
 
-  const response = await fetch(
-    `${API_URL}/api/technicians/availability`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `accessToken=${accessToken}`,
-      },
-      body: JSON.stringify(payload),
+  try {
+    const response = await fetch(
+      `${API_URL}/api/technicians/availability`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `accessToken=${accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message:
+          result.message || "Failed to update availability.",
+        data: null,
+      };
     }
-  );
 
-  const result = await response.json();
+    return {
+      success: true,
+      message:
+        result.message ||
+        "Availability updated successfully.",
+      data: result.data,
+    };
+  } catch (error) {
+    console.error("Update availability error:", error);
 
-  if (!response.ok) {
     return {
       success: false,
-      message: result.message || "Failed to update availability",
+      message:
+        "Something went wrong while updating availability.",
+      data: null,
     };
   }
-
-  return {
-    success: true,
-    message: result.message || "Availability updated successfully",
-    data: result.data,
-  };
 };
