@@ -563,32 +563,10 @@ The frontend checks API response status and handles the returned success/message
 
 Example:
 
-ts
+```ts
 // if (!res.ok || !result.success) {
 //   throw new Error(
 //     result.message || "Something went wrong."
 //   );
 // }
 
-# API Integration Documentation
-
-## Project
-
-FixItNow - Home Service Platform
-
-**Frontend:** Next.js + TypeScript
-
-**Backend API:**  
-https://fixitnow-backend-uy5z.vercel.app
-
----
-
-## 1. Authentication APIs
-
-### Register User
-
-**Method:** POST
-
-**Endpoint:**
-```text
-/api/users/register
