@@ -1,34 +1,45 @@
-# FixItNow - Home Service Platform 
+#  FixItNow - Home Service Platform
 
-FixItNow is a modern and responsive home service marketplace built with Next.js.
+FixItNow is a modern and responsive home service marketplace built with **Next.js**.
 
-Customers can find services, view technicians, book available time slots and track their bookings.
+Customers can find home services, view technician profiles, select available time slots, create bookings, make payments, and track their service requests.
 
-Technicians can create their profiles, manage availability and handle customer booking requests.
+Technicians can create their profiles, manage their availability, handle customer booking requests, and update job statuses.
 
-Admins can manage users, bookings and service categories.
+Admins can manage users, service categories, bookings, and monitor overall platform activity.
 
 ---
 
-## Live Links
+##  Live Links
 
 ### Frontend
 
 https://fixitnow-frontend-dev-5dun.vercel.app
-
 ### Backend
 
-https://fixitnow-backend-uy5z.vercel.
+https://fixitnow-backend-uy5z.vercel.app
 
-## GitHub
+---
 
-### Frontend:
+##  GitHub Repository
+
+### Frontend
 
 https://github.com/Busra2456/fixitnow-frontend-dev
 
-### Backend:
+### Backend
 
 https://github.com/Busra2456/fixitnow-backend-
+
+---
+
+##  Admin Credentials
+
+Use the following credentials to access the Admin Dashboard.
+
+**Admin Email:** `admin`
+
+**Admin Password:** `123456`
 ---
 
 ##  Main Features
@@ -52,10 +63,9 @@ https://github.com/Busra2456/fixitnow-backend-
 
 - Technician registration and login
 - Create and update technician profile
-- Add experience, skills and location
-- Manage service information
-- Set available working hours
-- Manage booking requests
+- Add experience, skills, location and service information
+- Manage available working hours
+- Manage customer booking requests
 - Accept or decline bookings
 - Mark booking as In Progress
 - Mark booking as Completed
