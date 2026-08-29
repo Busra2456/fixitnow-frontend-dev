@@ -1,7 +1,7 @@
 import ServiceManagement from "../../_components/ServiceManagement";
 
-import { getTechnicianServices } from "../../_actions/technicianServiceActions";
-import { getTechnicianCategories } from "../../_actions/technicianCategoryActions";
+import { getTechnicianServices } from "../../technician-dashboard/_actions/technicianServiceActions";
+import { getTechnicianCategories } from "../../../(publicGroup)/_actions/technicianCategoryActions";
 
 const ServicesPage = async () => {
   const [serviceResult, categoryResult] =

@@ -8,7 +8,7 @@ import {
   createTechnicianService,
   deleteTechnicianService,
   updateTechnicianService,
-} from "../_actions/technicianServiceActions";
+} from "../technician-dashboard/_actions/technicianServiceActions";
 
 type Category = {
   id: string;

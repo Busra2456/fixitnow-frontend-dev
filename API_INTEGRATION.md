@@ -108,7 +108,7 @@ Used to display service categories and filter services.
 
 **Frontend Files:**
 
-- `app/(publicGroup)/_actions/getCategories.ts`
+- `app/(publicGroup)/_actions/technicianCategoryActions.ts`
 - Technician service management
 
 ---
