@@ -46,8 +46,8 @@ export default async function HomePage() {
   <div className="absolute inset-0 bg-gradient-to-r from-blue-400/50 via-blue-100/40 to-white/10" />
 
   <div className="relative mx-auto max-w-7xl">
-    <div className="ml-0 max-w-3xl sm:ml-6 md:ml-10 lg:ml-20">
-      <span className="inline-flex rounded-full bg-white/20 px-2 py-1.5 text-xs font-medium text-white backdrop-blur-sm sm:px-4 sm:py-2 sm:text-sm">
+    <div className="ml-0 max-w-s3xl sm:ml-6 md:ml-10 lg:ml-20">
+      <span className="inline-flex rounded-full bg-white/20 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm sm:px-4 sm:py-2 sm:text-sm">
         Your Trusted Home Service Platform
       </span>
 
