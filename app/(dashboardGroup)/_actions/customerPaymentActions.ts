@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-const API_URL = process.env.BACKEND_API_URL;
+const API_URL= process.env.BACKEND_API_URL;
 
 type PaymentResponse = {
   success: boolean;
