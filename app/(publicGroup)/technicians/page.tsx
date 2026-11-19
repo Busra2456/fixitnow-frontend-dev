@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   BriefcaseBusiness,
-  CalendarCheck,
   MapPin,
   Star,
   Users,
@@ -18,13 +17,13 @@ export default async function TechniciansPage() {
 
   if (!result.success) {
     return (
-      <main className="min-h-screen bg-slate-50 px-4 py-16 sm:px-6">
+      <main className="min-h-screen bg-white px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-red-200 bg-white p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-slate-900">
-              Find Technicians
+          <div className="rounded-2xl border border-red-100 bg-red-50/70 p-6">
+            <h1 className="text-xl font-bold text-slate-900">
+              Unable to Load Technicians
             </h1>
-            <p className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-600">
+            <p className="mt-2 text-sm text-red-600">
               {result.message || "Failed to load technicians."}
             </p>
           </div>
@@ -33,35 +32,51 @@ export default async function TechniciansPage() {
     );
   }
 
+  const technicians = result.data ?? [];
+
   return (
-    <main className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50/60">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
         {/* Page Header */}
-        <div className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600">
-            <Users className="h-4 w-4" />
-            Our Professional Team
+        <section className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-blue-600">
+              <Users className="size-4" />
+              Our Professional Team
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Find Trusted{" "}
+              <span className="text-blue-600">Technicians</span>
+            </h1>
+
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500 sm:text-base">
+              Connect with skilled professionals and find the right expert
+              for your home service needs.
+            </p>
           </div>
 
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            Find Trusted{" "}
-            <span className="text-blue-600">Technicians</span>
-          </h1>
+          <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <Users className="size-5" />
+            </div>
+            <div>
+              <p className="text-lg font-bold leading-none text-slate-900">
+                {technicians.length}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Professionals
+              </p>
+            </div>
+          </div>
+        </section>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
-            Connect with skilled and experienced professionals.
-            Find the right expert for your home service needs.
-          </p>
-
-          <div className="mx-auto mt-7 h-1 w-20 rounded-full bg-blue-600" />
-        </div>
-
-        {/* Error-free Empty State */}
-        {result.data.length === 0 ? (
+        {/* Empty State */}
+        {technicians.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-              <Users className="h-8 w-8" />
+            <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+              <Users className="size-7" />
             </div>
 
             <h2 className="mt-5 text-xl font-bold text-slate-900">
@@ -75,85 +90,96 @@ export default async function TechniciansPage() {
           </div>
         ) : (
           <>
-            {/* Results Header */}
-            <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+            {/* Results Heading */}
+            <div className="mb-5 flex items-center justify-between border-b border-slate-200 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  Our Technicians
+                <h2 className="text-lg font-bold text-slate-900">
+                  Available Professionals
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Choose a professional for your next service.
+                <p className="mt-1 text-xs text-slate-500">
+                  Choose the right expert for your next service.
                 </p>
               </div>
-
-              <span className="rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-blue-600 shadow-sm">
-                {result.data.length} Technicians
+              <span className="rounded-lg bg-slate-200/70 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                {technicians.length} Results
               </span>
             </div>
 
             {/* Technician Cards */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {result.data.map((technician) => {
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {technicians.map((technician) => {
                 const profile = technician.technicianProfile;
                 const services = technician.servicesCreated ?? [];
 
                 return (
                   <article
                     key={technician.id}
-                    className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
                   >
                     {/* Card Top */}
-                    <div className="relative h-24 bg-gradient-to-r from-blue-600 to-indigo-500">
-                      <div className="absolute inset-0 bg-white/5" />
+                    <div className="relative flex h-16 items-center justify-between bg-slate-900 px-5">
+                      <span className="text-xs font-semibold tracking-wide text-slate-300">
+                        PROFESSIONAL TECHNICIAN
+                      </span>
 
-                      <div className="absolute right-4 top-4">
-                        {profile?.isAvailable ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-green-600 shadow-sm">
-                            <span className="h-2 w-2 rounded-full bg-green-500" />
-                            Available
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-500 shadow-sm">
-                            Unavailable
-                          </span>
-                        )}
-                      </div>
+                      {profile?.isAvailable ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
+                          <span className="size-1.5 rounded-full bg-green-500" />
+                          Available
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                          Unavailable
+                        </span>
+                      )}
                     </div>
 
-                    {/* Profile */}
-                    <div className="px-6 pb-6">
-                      <div className="-mt-12 flex justify-center">
+                    <div className="flex flex-1 flex-col p-5">
+                      {/* Profile */}
+                      <div className="flex items-center gap-4">
                         {profile?.image ? (
                           <Image
                             src={profile.image}
                             alt={`${technician.name} profile`}
-                            width={100}
-                            height={100}
-                            className="h-24 w-24 rounded-full border-4 border-white bg-white object-cover shadow-md"
+                            width={76}
+                            height={76}
+                            className="size-[76px] shrink-0 rounded-2xl border border-slate-100 bg-slate-50 object-cover"
                           />
                         ) : (
-                          <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-blue-100 text-3xl font-extrabold text-blue-600 shadow-md">
+                          <div className="flex size-[76px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-2xl font-bold text-slate-500">
                             {technician.name?.charAt(0).toUpperCase() || "T"}
                           </div>
                         )}
-                      </div>
 
-                      {/* Name & Email */}
-                      <div className="mt-4 text-center">
-                        <h2 className="text-lg font-bold text-slate-900 transition-colors group-hover:text-blue-600">
-                          {technician.name}
-                        </h2>
+                        <div className="min-w-0 flex-1">
+                          <h2 className="truncate text-base font-bold text-slate-900 transition-colors group-hover:text-blue-600">
+                            {technician.name}
+                          </h2>
 
-                        <p className="mt-1 truncate text-xs text-slate-500">
-                          {technician.email}
-                        </p>
+                          <p className="mt-1 truncate text-xs text-slate-500">
+                            {technician.email}
+                          </p>
+
+                          {profile?.rating !== undefined &&
+                            profile?.rating !== null && (
+                              <div className="mt-2 flex items-center gap-1.5">
+                                <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                                <span className="text-xs font-bold text-slate-800">
+                                  {Number(profile.rating).toFixed(1)}
+                                </span>
+                                <span className="text-xs text-slate-400">
+                                  Rating
+                                </span>
+                              </div>
+                            )}
+                        </div>
                       </div>
 
                       {/* Details */}
-                      <div className="mt-6 grid grid-cols-2 gap-3">
+                      <div className="mt-5 grid grid-cols-2 gap-2">
                         {profile?.location && (
-                          <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-3">
-                            <MapPin className="h-4 w-4 shrink-0 text-blue-600" />
+                          <div className="flex min-w-0 items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5">
+                            <MapPin className="size-4 shrink-0 text-blue-600" />
                             <span className="truncate text-xs font-medium text-slate-600">
                               {profile.location}
                             </span>
@@ -162,40 +188,26 @@ export default async function TechniciansPage() {
 
                         {profile?.experience !== null &&
                           profile?.experience !== undefined && (
-                            <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-3">
-                              <BriefcaseBusiness className="h-4 w-4 shrink-0 text-blue-600" />
-                              <span className="text-xs font-medium text-slate-600">
+                            <div className="flex min-w-0 items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5">
+                              <BriefcaseBusiness className="size-4 shrink-0 text-blue-600" />
+                              <span className="truncate text-xs font-medium text-slate-600">
                                 {profile.experience} Years Exp.
                               </span>
                             </div>
                           )}
                       </div>
 
-                      {/* Rating */}
-                      {profile?.rating !== undefined &&
-                        profile?.rating !== null && (
-                          <div className="mt-4 flex items-center justify-center gap-2">
-                            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                            <span className="text-sm font-bold text-slate-800">
-                              {Number(profile.rating).toFixed(1)}
-                            </span>
-                            <span className="text-xs text-slate-400">
-                              Rating
-                            </span>
-                          </div>
-                        )}
-
                       {/* Bio */}
                       {profile?.bio && (
-                        <p className="mt-4 line-clamp-3 text-center text-sm leading-6 text-slate-500">
+                        <p className="mt-4 line-clamp-2 min-h-10 text-sm leading-5 text-slate-500">
                           {profile.bio}
                         </p>
                       )}
 
                       {/* Services */}
-                      <div className="mt-6 border-t border-slate-100 pt-5">
+                      <div className="mt-5 border-t border-slate-100 pt-4">
                         <div className="mb-3 flex items-center gap-2">
-                          <Wrench className="h-4 w-4 text-blue-600" />
+                          <Wrench className="size-4 text-blue-600" />
                           <h3 className="text-sm font-bold text-slate-800">
                             Services Offered
                           </h3>
@@ -206,14 +218,14 @@ export default async function TechniciansPage() {
                             {services.slice(0, 3).map((service) => (
                               <span
                                 key={service.id}
-                                className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
+                                className="max-w-full truncate rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600"
                               >
                                 {service.title}
                               </span>
                             ))}
 
                             {services.length > 3 && (
-                              <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                              <span className="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700">
                                 +{services.length - 3} more
                               </span>
                             )}
@@ -225,13 +237,13 @@ export default async function TechniciansPage() {
                         )}
                       </div>
 
-                      {/* View Profile */}
+                      {/* Profile Button */}
                       <Link
                         href={`/technicians/${technician.id}`}
-                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition-all duration-300 hover:bg-blue-700 hover:shadow-lg"
+                        className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       >
                         View Profile
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </div>
                   </article>

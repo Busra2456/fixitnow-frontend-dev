@@ -1,4 +1,15 @@
+
 import Link from "next/link";
+
+import {
+  ArrowRight,
+  CalendarCheck,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Star,
+  Wrench,
+} from "lucide-react";
 
 import { getMe } from "@/service/getMe";
 
@@ -26,7 +37,6 @@ export default async function TechnicianDashboardPage() {
     ? meResult.data?.id
     : null;
 
-  // Get technician reviews
   const reviewResult = technicianId
     ? await getTechnicianReviews(technicianId)
     : {
@@ -39,8 +49,6 @@ export default async function TechnicianDashboardPage() {
     ? reviewResult.data ?? []
     : [];
 
-  
-
   const totalServices = services.length;
 
   const pendingRequests = bookings.filter(
@@ -52,309 +60,326 @@ export default async function TechnicianDashboardPage() {
   ).length;
 
   const totalEarnings = bookings
-    .filter(
-      (booking) => booking.status === "COMPLETED"
-    )
+    .filter((booking) => booking.status === "COMPLETED")
     .reduce(
-      (total, booking) =>
-        total + Number(booking.totalPrice),
+      (total, booking) => total + Number(booking.totalPrice),
       0
     );
 
-  return (
-    <div className="min-h-screen bg-muted/30 p-6">
-      <div className="mx-auto max-w-6xl">
+  const stats = [
+    {
+      title: "Total Services",
+      value: totalServices,
+      description: "Services you provide",
+      icon: Wrench,
+    },
+    {
+      title: "Pending Requests",
+      value: pendingRequests,
+      description: "Waiting for your response",
+      icon: Clock,
+    },
+    {
+      title: "Completed Jobs",
+      value: completedJobs,
+      description: "Successfully completed",
+      icon: CheckCircle2,
+    },
+    {
+      title: "Total Earnings",
+      value: `৳${totalEarnings.toLocaleString("en-BD")}`,
+      description: "From completed jobs",
+      icon: DollarSign,
+    },
+  ];
 
-        
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">
+  const quickActions = [
+    {
+      title: "Manage Services",
+      description:
+        "Create, view and manage the services you provide.",
+      href: "/technician-dashboard/services",
+      action: "Manage Services",
+      icon: Wrench,
+    },
+    {
+      title: "Manage Bookings",
+      description:
+        "Accept, decline and complete customer bookings.",
+      href: "/technician-dashboard/bookings",
+      action: "View Bookings",
+      icon: CalendarCheck,
+    },
+    {
+      title: "Availability",
+      description:
+        "Set your working hours and availability.",
+      href: "/technician-dashboard/availability",
+      action: "Set Availability",
+      icon: Clock,
+    },
+  ];
+
+  return (
+    <main className="min-h-screen bg-white">
+      <div className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+
+        {/* Dashboard Header */}
+        <section className="border-b border-slate-200 pb-8">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
             Technician Dashboard
+          </p>
+
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Welcome to Your Dashboard
           </h1>
 
-          <p className="mt-2 text-muted-foreground">
-            Manage your services, bookings, availability
-            and earnings.
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
+            Manage your services, bookings, availability and
+            earnings all in one place.
           </p>
-        </div>
+        </section>
 
-      
-
-        {!serviceResult.success && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-            Failed to load your services:{" "}
-            {serviceResult.message ||
-              "Unknown error"}
-          </div>
-        )}
-
-        {!bookingResult.success && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-            Failed to load your bookings:{" "}
-            {bookingResult.message ||
-              "Unknown error"}
-          </div>
-        )}
-
-        {!meResult.success && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-            Failed to load technician information:{" "}
-            {meResult.message ||
-              "Unknown error"}
-          </div>
-        )}
-
-        {!reviewResult.success && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-            Failed to load reviews:{" "}
-            {reviewResult.message ||
-              "Unknown error"}
-          </div>
-        )}
-
-        
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-          {/* Total Services */}
-          <div className="rounded-xl border bg-background p-5 shadow-sm">
-            <p className="text-sm text-muted-foreground">
-              Total Services
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold">
-              {totalServices}
-            </h2>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              Services you provide
-            </p>
-          </div>
-
-          {/* Pending Requests */}
-          <div className="rounded-xl border bg-background p-5 shadow-sm">
-            <p className="text-sm text-muted-foreground">
-              Pending Requests
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold">
-              {pendingRequests}
-            </h2>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              Waiting for your response
-            </p>
-          </div>
-
-          {/* Completed Jobs */}
-          <div className="rounded-xl border bg-background p-5 shadow-sm">
-            <p className="text-sm text-muted-foreground">
-              Completed Jobs
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold">
-              {completedJobs}
-            </h2>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              Successfully completed
-            </p>
-          </div>
-
-          {/* Total Earnings */}
-          <div className="rounded-xl border bg-background p-5 shadow-sm">
-            <p className="text-sm text-muted-foreground">
-              Total Earnings
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold">
-              ৳
-              {totalEarnings.toLocaleString("en-BD")}
-            </h2>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              From completed jobs
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <h2 className="mb-4 text-xl font-semibold">
-            Quick Actions
-          </h2>
-
-          <div className="grid gap-4 md:grid-cols-3">
-
-            {/* Manage Services */}
-            <Link
-              href="/technician-dashboard/services"
-              className="rounded-xl border bg-background p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        {/* Error Messages */}
+        {[
+          {
+            success: serviceResult.success,
+            message: `Failed to load your services: ${
+              serviceResult.message || "Unknown error"
+            }`,
+          },
+          {
+            success: bookingResult.success,
+            message: `Failed to load your bookings: ${
+              bookingResult.message || "Unknown error"
+            }`,
+          },
+          {
+            success: meResult.success,
+            message: `Failed to load technician information: ${
+              meResult.message || "Unknown error"
+            }`,
+          },
+          {
+            success: reviewResult.success,
+            message: `Failed to load reviews: ${
+              reviewResult.message || "Unknown error"
+            }`,
+          },
+        ]
+          .filter((item) => !item.success)
+          .map((item, index) => (
+            <div
+              key={index}
+              className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600"
             >
-              <h2 className="font-semibold">
-                Manage Services
-              </h2>
+              {item.message}
+            </div>
+          ))}
 
-              <p className="mt-2 text-sm text-muted-foreground">
-                Create, view and delete the services
-                you provide.
-              </p>
-
-              <span className="mt-4 inline-block text-sm font-medium text-primary">
-                Manage Services →
-              </span>
-            </Link>
-
-            {/* Manage Bookings */}
-            <Link
-              href="/technician-dashboard/bookings"
-              className="rounded-xl border bg-background p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <h2 className="font-semibold">
-                Manage Bookings
-              </h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                Accept, decline and complete customer
-                bookings.
-              </p>
-
-              <span className="mt-4 inline-block text-sm font-medium text-primary">
-                View Bookings →
-              </span>
-            </Link>
-
-            {/* Availability */}
-            <Link
-              href="/technician-dashboard/availability"
-              className="rounded-xl border bg-background p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <h2 className="font-semibold">
-                Availability
-              </h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                Set your working hours and availability.
-              </p>
-
-              <span className="mt-4 inline-block text-sm font-medium text-primary">
-                Set Availability →
-              </span>
-            </Link>
+        {/* Statistics */}
+        <section>
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-slate-900">
+              Overview
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Your service performance at a glance.
+            </p>
           </div>
-        </div>
 
-        
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
 
-        <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
+              return (
+                <div
+                  key={stat.title}
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-slate-500">
+                      {stat.title}
+                    </p>
 
-          <div className="flex items-center justify-between">
+                    <div className="rounded-xl bg-blue-50 p-3">
+                      <Icon className="size-5 text-blue-600" />
+                    </div>
+                  </div>
+
+                  <h3 className="mt-5 text-2xl font-bold text-slate-900">
+                    {stat.value}
+                  </h3>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    {stat.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section>
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-slate-900">
+              Quick Actions
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Quickly access your important dashboard features.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {quickActions.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+                >
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-slate-100 transition group-hover:bg-blue-50">
+                    <Icon className="size-6 text-slate-700 group-hover:text-blue-600" />
+                  </div>
+
+                  <h3 className="mt-5 font-bold text-slate-900">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-2 min-h-10 text-sm leading-6 text-slate-500">
+                    {item.description}
+                  </p>
+
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-600">
+                    {item.action}
+                    <ArrowRight className="size-4 transition group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Customer Reviews */}
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-xl font-bold text-slate-900">
                 Customer Reviews
               </h2>
 
-              <p className="mt-1 text-sm text-muted-foreground">
-                Reviews from your customers
+              <p className="mt-1 text-sm text-slate-500">
+                Feedback and ratings from your customers.
               </p>
             </div>
 
-            <div className="rounded-full bg-muted px-3 py-1 text-sm font-medium">
+            <span className="w-fit rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700">
               {reviews.length}{" "}
-              {reviews.length === 1
-                ? "Review"
-                : "Reviews"}
-            </div>
+              {reviews.length === 1 ? "Review" : "Reviews"}
+            </span>
           </div>
 
-          {/* No Reviews */}
           {reviews.length === 0 ? (
-            <div className="mt-6 rounded-lg border border-dashed p-8 text-center">
-              <p className="font-medium">
+            <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-12 text-center">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-white">
+                <Star className="size-6 text-slate-400" />
+              </div>
+
+              <p className="mt-4 font-semibold text-slate-800">
                 No reviews yet
               </p>
 
-              <p className="mt-1 text-sm text-muted-foreground">
-                Customer reviews will appear here
-                after customers review your completed
-                jobs.
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                Customer reviews will appear here after
+                customers review your completed jobs.
               </p>
             </div>
           ) : (
-            /* Reviews */
             <div className="mt-6 space-y-4">
               {reviews.map((review) => (
                 <div
                   key={review.id}
-                  className="rounded-lg border p-4"
+                  className="rounded-xl border border-slate-200 bg-white p-5 transition hover:shadow-sm"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-
-                    {/* Customer */}
                     <div>
-                      <p className="font-semibold">
-                        {review.customer?.name ||
-                          "Customer"}
+                      <p className="font-semibold text-slate-900">
+                        {review.customer?.name || "Customer"}
                       </p>
 
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {review.booking?.service
-                          ?.title || "Service"}
+                      <p className="mt-1 text-sm text-slate-500">
+                        {review.booking?.service?.title || "Service"}
                       </p>
                     </div>
 
-                    {/* Rating */}
-                    <div className="text-sm">
-                      {"⭐".repeat(
-                        Number(review.rating)
-                      )}
+                    <div className="flex items-center gap-1">
+                      {Array.from({
+                        length: Math.max(
+                          0,
+                          Math.min(5, Number(review.rating) || 0)
+                        ),
+                      }).map((_, index) => (
+                        <Star
+                          key={index}
+                          className="size-4 fill-amber-400 text-amber-400"
+                        />
+                      ))}
                     </div>
                   </div>
 
-                  {/* Comment */}
-                  <p className="mt-4 text-sm leading-6">
+                  <p className="mt-4 text-sm leading-6 text-slate-600">
                     {review.comment}
                   </p>
 
-                  {/* Date */}
                   {review.createdAt && (
-                    <p className="mt-3 text-xs text-muted-foreground">
+                    <p className="mt-3 text-xs text-slate-400">
                       {new Date(
                         review.createdAt
-                      ).toLocaleDateString(
-                        "en-BD",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      )}
+                      ).toLocaleDateString("en-BD", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </p>
                   )}
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </section>
 
-        
-        <div className="mt-8 rounded-xl border bg-background p-6 shadow-sm">
-          <h2 className="text-lg font-semibold">
-            Getting Started
-          </h2>
+        {/* Getting Started */}
+        <section className="rounded-2xl bg-slate-900 p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-blue-400">
+                GET STARTED
+              </p>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            Start by creating a service that customers
-            can book.
-          </p>
+              <h2 className="mt-2 text-xl font-bold text-white sm:text-2xl">
+                Grow Your Service Business
+              </h2>
 
-          <Link
-            href="/technician-dashboard/services"
-            className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-          >
-            Create Your First Service
-          </Link>
-        </div>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
+                Create your first service and let customers
+                discover and book your services.
+              </p>
+            </div>
+
+            <Link
+              href="/technician-dashboard/services"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-50"
+            >
+              Create Your First Service
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </section>
 
       </div>
-    </div>
+    </main>
   );
 }

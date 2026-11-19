@@ -38,13 +38,13 @@ export default async function HomePage() {
   return (
     <main className="w-full overflow-hidden bg-white">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-slate-950">
+      <section className="relative isolate overflow-hidden bg-slate-550">
         <div
           className="absolute inset-0 -z-20 bg-cover bg-center"
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
 
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/95 via-slate-900/85 to-slate-900/65" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-900/95 via-slate-900/75 to-slate-900/55" />
 
         <div className="absolute -right-32 -top-32 -z-10 h-96 w-96 rounded-full bg-slate-400/10 blur-3xl" />
 
@@ -59,7 +59,7 @@ export default async function HomePage() {
 
             <h1 className="mt-7 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
               Reliable Home Services,
-              <span className="mt-2 block text-blue-300">
+              <span className="mt-2 block text-blue-600">
                 Right When You Need Them.
               </span>
             </h1>

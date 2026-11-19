@@ -26,9 +26,7 @@ type Props = {
   }>;
 };
 
-export default async function TechnicianDetailsPage({
-  params,
-}: Props) {
+export default async function TechnicianDetailsPage({ params }: Props) {
   const { id } = await params;
   const result = await getTechnicianById(id);
 
@@ -48,155 +46,138 @@ export default async function TechnicianDetailsPage({
     technician.name?.charAt(0).toUpperCase() || "T";
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-slate-50/60">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
-        {/* Back Navigation */}
-        <Link
-          href="/technicians"
-          className="mb-8 inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition-colors hover:text-blue-600"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Technicians
-        </Link>
+        {/* Page Header */}
+        <section className="mb-6">
+          <Link
+            href="/technicians"
+            className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-blue-600"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Technicians
+          </Link>
 
-        {/* Technician Profile Header */}
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:p-6">
+            <div className="flex min-w-0 items-center gap-4">
+              <div className="flex size-[76px] shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 text-2xl font-bold text-slate-500 sm:size-20">
+                {profile?.image ? (
+                  <Image
+                    src={profile.image}
+                    alt={`${technician.name} profile`}
+                    width={80}
+                    height={80}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  technicianInitial
+                )}
+              </div>
 
-          <div className="relative h-36 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-500 sm:h-44">
-            <div className="absolute inset-0 bg-white/5" />
-            <div className="absolute bottom-5 right-6 hidden text-right text-white/20 sm:block">
-              <Wrench className="h-20 w-20" />
-            </div>
-          </div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="truncate text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                    {technician.name}
+                  </h1>
 
-          <div className="px-5 pb-7 sm:px-8">
-            <div className="-mt-14 flex flex-col gap-5 sm:-mt-16 sm:flex-row sm:items-end sm:justify-between">
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-blue-100 text-4xl font-extrabold text-blue-600 shadow-lg">
-                  {profile?.image ? (
-                    <Image
-                      src={profile.image}
-                      alt={`${technician.name} profile`}
-                      width={112}
-                      height={112}
-                      className="h-full w-full object-cover"
-                    />
+                  {isAvailable ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                      <span className="size-1.5 rounded-full bg-green-500" />
+                      Available
+                    </span>
                   ) : (
-                    technicianInitial
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                      <span className="size-1.5 rounded-full bg-slate-400" />
+                      Unavailable
+                    </span>
                   )}
                 </div>
 
-                <div className="pb-1">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                      {technician.name}
-                    </h1>
+                <p className="mt-1.5 flex items-center gap-2 truncate text-xs text-slate-500 sm:text-sm">
+                  <Mail className="size-4 shrink-0 text-blue-600" />
+                  {technician.email}
+                </p>
 
-                    {isAvailable ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-xs font-bold text-green-700">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Available
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
-                        <XCircle className="h-3.5 w-3.5" />
-                        Unavailable
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
-                    <Mail className="h-4 w-4 text-blue-600" />
-                    {technician.email}
-                  </div>
-
-                  <div className="mt-3 flex items-center gap-2">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-slate-900">
-                      {rating.toFixed(1)}
-                    </span>
-                    <span className="text-sm text-slate-400">
-                      ({reviews.length} reviews)
-                    </span>
-                  </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <Star className="size-4 fill-amber-400 text-amber-400" />
+                  <span className="text-sm font-bold text-slate-900">
+                    {rating.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    ({reviews.length} reviews)
+                  </span>
                 </div>
               </div>
-
-              {services.length > 0 && (
-                <Link
-                  href={`/services/${services[0].id}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  Book Technician
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              )}
             </div>
 
-            {/* Quick Information */}
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-                  <MapPin className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-slate-400">
-                    Location
-                  </p>
-                  <p className="truncate text-sm font-bold text-slate-800">
-                    {profile?.location || "Not provided"}
-                  </p>
-                </div>
-              </div>
+            {services.length > 0 && (
+              <Link
+                href={`/services/${services[0].id}`}
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                <CalendarDays className="size-4" />
+                Book Technician
+                <ArrowRight className="size-4" />
+              </Link>
+            )}
+          </div>
+        </section>
 
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-                  <BriefcaseBusiness className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-400">
-                    Experience
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">
-                    {profile?.experience ?? 0} Years
-                  </p>
-                </div>
-              </div>
+        {/* Quick Information */}
+        <section className="mb-6 grid gap-4 sm:grid-cols-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <MapPin className="size-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs text-slate-400">Location</p>
+              <p className="truncate text-sm font-semibold text-slate-800">
+                {profile?.location || "Not provided"}
+              </p>
+            </div>
+          </div>
 
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-                  <Wrench className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-400">
-                    Services
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">
-                    {services.length} Services
-                  </p>
-                </div>
-              </div>
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <BriefcaseBusiness className="size-5" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Experience</p>
+              <p className="text-sm font-semibold text-slate-800">
+                {profile?.experience ?? 0} Years
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <Wrench className="size-5" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Services</p>
+              <p className="text-sm font-semibold text-slate-800">
+                {services.length} Services
+              </p>
             </div>
           </div>
         </section>
 
         {/* Main Content */}
-        <div className="mt-7 grid gap-7 lg:grid-cols-3">
+        <div className="grid items-start gap-5 lg:grid-cols-3">
 
-          {/* Left Content */}
-          <div className="space-y-7 lg:col-span-2">
+          {/* Left Column */}
+          <div className="space-y-5 lg:col-span-2">
 
-            {/* About */}
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            {/* About Technician */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <UserRound className="h-5 w-5" />
+                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <UserRound className="size-5" />
                 </div>
+
                 <div>
-                  <h2 className="text-lg font-extrabold text-slate-900">
+                  <h2 className="font-bold text-slate-900">
                     About Technician
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -205,50 +186,50 @@ export default async function TechnicianDetailsPage({
                 </div>
               </div>
 
-              <p className="mt-5 text-sm leading-7 text-slate-600">
+              <p className="mt-4 text-sm leading-7 text-slate-600">
                 {profile?.bio ||
                   "This technician has not added a biography yet."}
               </p>
             </section>
 
-            {/* Services */}
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
-              <div className="flex items-center justify-between gap-3">
+            {/* Services Offered */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-extrabold text-slate-900">
+                  <h2 className="text-lg font-bold text-slate-900">
                     Services Offered
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-xs text-slate-500 sm:text-sm">
                     Professional services by this technician
                   </p>
                 </div>
 
-                <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600">
+                <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
                   {services.length} Services
                 </span>
               </div>
 
               {services.length === 0 ? (
-                <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center">
-                  <Wrench className="mx-auto h-9 w-9 text-slate-300" />
+                <div className="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                  <Wrench className="mx-auto size-8 text-slate-300" />
                   <p className="mt-3 text-sm text-slate-500">
                     No services added yet.
                   </p>
                 </div>
               ) : (
-                <div className="mt-6 space-y-4">
+                <div className="mt-5 space-y-3">
                   {services.map((service) => (
                     <div
                       key={service.id}
-                      className="flex flex-col gap-4 rounded-2xl border border-slate-100 p-4 transition-colors hover:border-blue-200 hover:bg-blue-50/30 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:bg-slate-50/50 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-                          <Wrench className="h-5 w-5" />
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                          <Wrench className="size-5" />
                         </div>
 
-                        <div>
-                          <h3 className="font-bold text-slate-900">
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-bold text-slate-900">
                             {service.title}
                           </h3>
                           <p className="mt-1 text-xs text-slate-500">
@@ -257,21 +238,22 @@ export default async function TechnicianDetailsPage({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between gap-4 sm:justify-end">
+                      <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end">
                         <div>
                           <p className="text-xs text-slate-400">
                             Service Price
                           </p>
-                          <p className="mt-1 text-lg font-extrabold text-slate-900">
+                          <p className="mt-1 font-bold text-slate-900">
                             ৳{Number(service.price).toLocaleString("en-BD")}
                           </p>
                         </div>
 
                         <Link
                           href={`/services/${service.id}`}
-                          className="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white transition hover:bg-blue-700"
+                          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-600"
                         >
                           Book Now
+                          <ArrowRight className="size-3.5" />
                         </Link>
                       </div>
                     </div>
@@ -281,13 +263,14 @@ export default async function TechnicianDetailsPage({
             </section>
 
             {/* Customer Reviews */}
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <MessageCircle className="h-5 w-5" />
+                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <MessageCircle className="size-5" />
                 </div>
+
                 <div>
-                  <h2 className="text-lg font-extrabold text-slate-900">
+                  <h2 className="font-bold text-slate-900">
                     Customer Reviews
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -297,29 +280,26 @@ export default async function TechnicianDetailsPage({
               </div>
 
               {reviews.length === 0 ? (
-                <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center">
-                  <MessageCircle className="mx-auto h-9 w-9 text-slate-300" />
+                <div className="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                  <MessageCircle className="mx-auto size-8 text-slate-300" />
                   <p className="mt-3 text-sm text-slate-500">
                     No reviews yet.
                   </p>
                 </div>
               ) : (
-                <div className="mt-6 space-y-5">
+                <div className="mt-5 divide-y divide-slate-100">
                   {reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="border-b border-slate-100 pb-5 last:border-0 last:pb-0"
-                    >
+                    <div key={review.id} className="py-5 first:pt-0 last:pb-0">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600">
                             {review.customer?.name
                               ?.charAt(0)
                               .toUpperCase() || "C"}
                           </div>
 
-                          <div>
-                            <p className="text-sm font-bold text-slate-900">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-slate-900">
                               {review.customer?.name || "Customer"}
                             </p>
                             <p className="text-xs text-slate-400">
@@ -328,8 +308,8 @@ export default async function TechnicianDetailsPage({
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1.5">
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                        <div className="flex shrink-0 items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1.5">
+                          <Star className="size-3.5 fill-amber-400 text-amber-400" />
                           <span className="text-sm font-bold text-slate-800">
                             {review.rating}
                           </span>
@@ -337,7 +317,7 @@ export default async function TechnicianDetailsPage({
                       </div>
 
                       {review.comment && (
-                        <p className="mt-4 text-sm leading-7 text-slate-600">
+                        <p className="mt-3 text-sm leading-6 text-slate-600">
                           {review.comment}
                         </p>
                       )}
@@ -349,14 +329,17 @@ export default async function TechnicianDetailsPage({
           </div>
 
           {/* Right Sidebar */}
-          <aside className="space-y-6">
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <aside className="space-y-5">
+
+            {/* Availability */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <Clock className="h-5 w-5" />
+                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <Clock className="size-5" />
                 </div>
+
                 <div>
-                  <h2 className="font-extrabold text-slate-900">
+                  <h2 className="font-bold text-slate-900">
                     Availability
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -365,25 +348,25 @@ export default async function TechnicianDetailsPage({
                 </div>
               </div>
 
-              <div className="mt-6 rounded-xl bg-slate-50 p-4">
+              <div className="mt-5 rounded-xl bg-slate-50 p-4">
                 <p className="text-xs font-medium text-slate-400">
                   Working Hours
                 </p>
-                <p className="mt-2 text-lg font-extrabold text-slate-900">
+                <p className="mt-2 text-lg font-bold text-slate-900">
                   {profile?.availableFrom || "--"} -{" "}
                   {profile?.availableTo || "--"}
                 </p>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-3">
                 {isAvailable ? (
-                  <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-semibold text-green-700">
-                    <CheckCircle2 className="h-4 w-4" />
+                  <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm font-semibold text-green-700">
+                    <CheckCircle2 className="size-4" />
                     Currently Available
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 rounded-xl bg-slate-100 p-3 text-sm font-semibold text-slate-600">
-                    <XCircle className="h-4 w-4" />
+                  <div className="flex items-center gap-2 rounded-lg bg-slate-100 p-3 text-sm font-semibold text-slate-600">
+                    <XCircle className="size-4" />
                     Currently Unavailable
                   </div>
                 )}
@@ -392,36 +375,36 @@ export default async function TechnicianDetailsPage({
               {services.length > 0 && (
                 <Link
                   href={`/services/${services[0].id}`}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 hover:shadow-lg"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
                 >
-                  <CalendarDays className="h-4 w-4" />
+                  <CalendarDays className="size-4" />
                   Book This Technician
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="size-4" />
                 </Link>
               )}
             </section>
 
-            {/* Trust Card */}
-            <section className="rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-600 p-6 text-white shadow-lg shadow-blue-900/10">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-                <CheckCircle2 className="h-6 w-6" />
+            {/* Explore Services */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <CheckCircle2 className="size-5" />
               </div>
 
-              <h3 className="mt-5 text-lg font-extrabold">
-                Quality Home Services
+              <h3 className="mt-4 font-bold text-slate-900">
+                Need Home Services?
               </h3>
 
-              <p className="mt-2 text-sm leading-6 text-blue-100">
-                Explore available services and choose the right technician
-                for your home service needs.
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Explore available services and find the right professional
+                for your needs.
               </p>
 
               <Link
                 href="/services"
-                className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-white transition hover:gap-3"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:gap-3"
               >
                 Explore Services
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="size-4" />
               </Link>
             </section>
           </aside>
