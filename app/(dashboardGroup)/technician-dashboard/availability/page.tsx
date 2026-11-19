@@ -30,13 +30,7 @@ export default async function AvailabilityPage() {
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <Link
-  href="/technician-dashboard"
-  className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
->
-  <ArrowLeft className="size-4" />
-  Back to Dashboard
-</Link>
+  
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
         {/* Page Header */}
@@ -47,7 +41,15 @@ export default async function AvailabilityPage() {
                 Technician Dashboard
               </span>
               <Sparkles className="size-4 text-blue-500" />
+            
             </div>
+    <Link
+  href="/technician-dashboard"
+  className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+>
+  <ArrowLeft className="size-4" />
+  Back to Dashboard
+</Link>
 
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
               Manage Availability
