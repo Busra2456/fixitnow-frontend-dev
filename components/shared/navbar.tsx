@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
@@ -34,6 +34,7 @@ const navItems = [
 
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const role = user.data?.role;
 
   const dashboardHref =
@@ -57,17 +58,21 @@ export function Navbar({ user }: NavbarProps) {
     }
   };
 
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/90 shadow-sm backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-[76px] items-center justify-between">
-
           {/* Brand Logo */}
           <Link
             href="/"
             className="group flex shrink-0 items-center gap-3"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 ring-1 ring-blue-100 transition-all duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 ring-1 ring-slate-200 transition-all duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
               <Image
                 src="/Wrench.svg"
                 alt="FixItNow"
@@ -93,7 +98,12 @@ export function Navbar({ user }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-4 py-2.5 text-[13px] font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-blue-600 hover:shadow-sm"
+                aria-current={isActive(item.href) ? "page" : undefined}
+                className={`rounded-full px-4 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
+                  isActive(item.href)
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm"
+                }`}
               >
                 {item.label}
               </Link>
@@ -107,7 +117,7 @@ export function Navbar({ user }: NavbarProps) {
                 <button
                   type="button"
                   aria-label="Open user menu"
-                  className="group flex h-11 w-11 items-center justify-center rounded-full border border-blue-100 bg-blue-50 text-blue-600 transition-all duration-200 hover:border-blue-300 hover:bg-blue-100 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  className="group flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                 >
                   <User className="h-5 w-5 transition-transform group-hover:scale-110" />
                 </button>
@@ -128,7 +138,7 @@ export function Navbar({ user }: NavbarProps) {
                       {user.data?.email}
                     </p>
 
-                    <span className="mt-1 w-fit rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-600">
+                    <span className="mt-1 w-fit rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-700">
                       {role}
                     </span>
                   </div>
@@ -139,9 +149,9 @@ export function Navbar({ user }: NavbarProps) {
                 <DropdownMenuItem asChild>
                   <Link
                     href={dashboardHref}
-                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-blue-50 focus:text-blue-600"
+                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-slate-100 focus:text-slate-900"
                   >
-                    <LayoutDashboard className="h-4 w-4 text-blue-600" />
+                    <LayoutDashboard className="h-4 w-4 text-slate-600" />
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
@@ -149,9 +159,9 @@ export function Navbar({ user }: NavbarProps) {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/profile"
-                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-blue-50 focus:text-blue-600"
+                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-slate-100 focus:text-slate-900"
                   >
-                    <User className="h-4 w-4 text-blue-600" />
+                    <User className="h-4 w-4 text-slate-600" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
@@ -159,9 +169,9 @@ export function Navbar({ user }: NavbarProps) {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/settings"
-                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-blue-50 focus:text-blue-600"
+                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:bg-slate-100 focus:text-slate-900"
                   >
-                    <Settings className="h-4 w-4 text-blue-600" />
+                    <Settings className="h-4 w-4 text-slate-600" />
                     Settings
                   </Link>
                 </DropdownMenuItem>
@@ -179,7 +189,7 @@ export function Navbar({ user }: NavbarProps) {
             </DropdownMenu>
           ) : (
             <Link href="/login">
-              <Button className="group h-11 cursor-pointer rounded-full bg-blue-600 px-6 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30">
+              <Button className="group h-11 cursor-pointer rounded-full bg-slate-900 px-6 text-sm font-bold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-700 hover:shadow-lg">
                 Login
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -193,7 +203,12 @@ export function Navbar({ user }: NavbarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="shrink-0 rounded-full border border-slate-100 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600 transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+              aria-current={isActive(item.href) ? "page" : undefined}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
+                isActive(item.href)
+                  ? "border-slate-900 bg-slate-900 text-white"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+              }`}
             >
               {item.label}
             </Link>
