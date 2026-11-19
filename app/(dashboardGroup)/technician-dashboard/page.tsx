@@ -13,7 +13,7 @@ import {
   BriefcaseBusiness,
   TrendingUp,
 } from "lucide-react";
-
+import { ArrowLeft } from "lucide-react";
 import { getMe } from "@/service/getMe";
 
 import { getTechnicianBookings } from "../_actions/technicianBookingActions";
@@ -165,6 +165,13 @@ export default async function TechnicianDashboardPage() {
           <div className="relative flex flex-col justify-between gap-7 md:flex-row md:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-blue-300">
+                <Link
+  href="/technician-dashboard"
+  className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+>
+  <ArrowLeft className="size-4" />
+  Back to Dashboard
+</Link>
                 <BriefcaseBusiness className="size-3.5" />
                 TECHNICIAN WORKSPACE
               </div>
