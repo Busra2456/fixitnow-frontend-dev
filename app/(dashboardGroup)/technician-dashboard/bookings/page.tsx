@@ -1,7 +1,7 @@
 
-import { CalendarCheck, ClipboardList } from "lucide-react";
+import { ArrowLeft, CalendarCheck, ClipboardList } from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+
 import { getTechnicianBookings } from "../../_actions/technicianBookingActions";
 import TechnicianBookingTable from "../../_components/TechnicianBookingTable";
 
@@ -12,17 +12,19 @@ export default async function TechnicianBookingsPage() {
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
+        {/* Back Navigation */}
+        <Link
+          href="/technician-dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-blue-600"
+        >
+          <ArrowLeft className="size-4" />
+          Back to Dashboard
+        </Link>
+
         {/* Page Header */}
         <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
             <div className="mb-3 flex items-center gap-2">
-               <Link
-  href="/technician-dashboard"
-  className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
->
-  <ArrowLeft className="size-4" />
-  Back to Dashboard
-</Link>
               <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                 Technician Dashboard
               </span>
